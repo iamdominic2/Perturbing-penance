@@ -1,0 +1,1434 @@
+//----- Broadcast received events -------------------------------------------------------------------------------------
+
+WhenBroadcastReceived(GF)
+{
+    PlayerPowerUps = 1;
+    PlayerDPointTile = 1;
+    moved = 0;
+}
+
+WhenBroadcastReceived(GF)
+{
+    mapof = 0;
+    Forever
+    {
+        Wait Until Sensing.KeyPressed(m);
+        mapof = (1 - mapof);
+        Wait Until (Not (Sensing.KeyPressed(m)));
+    }
+}
+
+WhenBroadcastReceived(PastTurn)
+{
+    Call PastTurn;
+}
+
+WhenBroadcastReceived(sosis)
+{
+    Stop(other scripts in sprite);
+}
+
+WhenBroadcastReceived(StartGame)
+{
+    Pen.Clear();
+    floor = 1;
+    floorlight = 0;
+    turn = 0;
+    List.DeleteAll(revealed tiles);
+    List.DeleteAll(mapitems);
+    List.DeleteAll(flooritemmount);
+    Playerloc = 1180;
+    Control.Wait(0.1);
+    Call Generate items;
+    Forever
+    {
+        Call ItemCheck("n");
+        Pen.Clear();
+        Call PaintMap;
+        If (Operator.LetterOf(maps[floor], Playerloc) == 3)
+        {
+            Call Illu1;
+        }
+        Else
+        {
+            Call Illuminate;
+        }
+        prev pos = Playerloc;
+        If (inventoryopen == 0)
+        {
+            Call Movement;
+        }
+        Else
+        {
+            Repeat Until (inventoryopen == 0)
+            {
+                Pen.Clear();
+                Call PaintMap;
+                Event.Broadcast("clearclones");
+                Event.Broadcast("Paint Bottom");
+            }
+            Control.Wait(0);
+        }
+        If ((Operator.LetterOf(maps[floor], Playerloc) == 1) Or ((floor == 26) And (Not (List.ContainsItem(monstermaploc, "Q")))))
+        {
+            If List.ContainsItem(MH floors, floor)
+            {
+                Sound.StopAllSounds();
+            }
+            floor += 1;
+            List.DeleteAll(revealed tiles);
+            Playerloc = 1180;
+            PlayerPowerUps = 1;
+            player's status = 0;
+            Event.Broadcast("Advance");
+            Control.Wait(0.2);
+            Sound.Play(Footsteps);
+            floorlight = 0;
+            If ((floor == 26) Or (floor == 40))
+            {
+                List.DeleteAll(revealed tiles);
+                List.DeleteAll(mapitems);
+                List.DeleteAll(flooritemmount);
+                Call RevealMap;
+            }
+            Else
+            {
+                List.DeleteAll(mapitems);
+                List.DeleteAll(flooritemmount);
+                Call Generate items;
+            }
+            If List.ContainsItem(MH floors, floor)
+            {
+                Call RevealMap;
+                List.Add(textlog, "It's a Monster House!");
+            }
+            Control.Wait(0.2);
+        }
+        If ((floor == 40) And (Not (List.ContainsItem(monstermaploc, "G"))))
+        {
+            Control.Wait(1);
+            List.Add(textlog, "Congratulations! You have defeated the all-mighty bringer of evil *S U D O  G O D*!");
+            List.Add(textlog, Operator.Join("Press R if you want to play yet again! Score: ", ((PlayerScorept1 + PlayerExp) + ((PlayerLevel * 1000) + 1493800))));
+            Event.Broadcast("Ending");
+            Forever
+            {
+                Event.Broadcast("clearclones");
+                Event.Broadcast("Paint Bottom");
+                Pen.Clear();
+                Call PaintMap;
+            }
+        }
+    }
+}
+
+
+//----- Custom blocks -------------------------------------------------------------------------------------------------
+
+Define additem(string ) (warp=false)
+{
+    If ( == "")
+    {
+        List.Add(mapitems, item generation[random]);
+        If (((mapitems[counter3] < 25) And (Operator.Random(1 , ((floor < 8) + 3)) == 1)) Or ((Operator.Random(1 , 4) == 1) And (mapitems[counter3] == 39)))
+        {
+            List.ReplaceItem(mapitems, counter3, item generation[random]);
+        }
+        If (mapitems[counter3] < 15)
+        {
+            List.Add(flooritemmount, Operator.Random(0 , Operator.Random(0 , 3)));
+        }
+        Else
+        {
+            If ((mapitems[counter3] > 32) And (mapitems[counter3] < 40))
+            {
+                List.Add(flooritemmount, Operator.Random(2 , 4));
+            }
+            Else
+            {
+                List.Add(flooritemmount, 0);
+            }
+        }
+    }
+    Else
+    {
+        If ( == "r")
+        {
+            List.ReplaceItem(mapitems, counter3, item generation[random]);
+            If (mapitems[counter3] < 15)
+            {
+                List.ReplaceItem(flooritemmount, counter3, Operator.Random(0 , Operator.Random(0 , 3)));
+            }
+            Else
+            {
+                If ((mapitems[counter3] > 32) And (mapitems[counter3] < 40))
+                {
+                    List.ReplaceItem(flooritemmount, counter3, Operator.Random(2 , 4));
+                }
+                Else
+                {
+                    List.Add(flooritemmount, 0);
+                }
+            }
+        }
+        Else
+        {
+            List.ReplaceItem(mapitems, counter3, );
+            If (mapitems[counter3] < 15)
+            {
+                List.ReplaceItem(flooritemmount, counter3, Operator.Random(0 , Operator.Random(0 , 3)));
+            }
+            Else
+            {
+                If ((mapitems[counter3] > 32) And (mapitems[counter3] < 40))
+                {
+                    List.ReplaceItem(flooritemmount, counter3, Operator.Random(2 , 4));
+                }
+                Else
+                {
+                    List.Add(flooritemmount, 0);
+                }
+            }
+        }
+    }
+}
+
+Define Generate items (warp=true)
+{
+    counter3 = 0;
+    sas = 0;
+    Repeat (2360)
+    {
+        counter3 += 1;
+        If (Not ((counter3 == 1180)))
+        {
+            If ((Operator.LetterOf(maps[floor], counter3) == 2) And (Operator.Random(1 , (16 - ((floor > 26) * 6))) == 2))
+            {
+                If ((Not (List.ContainsItem(MH floors, floor))) Or (Operator.Random(1 , 6) == 1))
+                {
+                    Call additem("");
+                }
+                Else
+                {
+                    List.Add(mapitems, "");
+                    List.Add(flooritemmount, "");
+                }
+            }
+            Else
+            {
+                List.Add(mapitems, "");
+                List.Add(flooritemmount, "");
+            }
+        }
+    }
+}
+
+Define GUI (warp=true)
+{
+    Looks.SetEffectTo(GHOST, 0);
+    Looks.Show();
+    Looks.SetSizeTo(100);
+    Motion.GoToXY(-144, 152);
+    gui_clone_id = 0;
+    Repeat (9)
+    {
+        Repeat (7)
+        {
+            Motion.ChangeYBy(-36);
+            gui_clone_id += 1;
+            Looks.SwitchCostumeTo((Operator.LetterOf(maps[floor], (Playerloc + OFFSET-GUI-B[gui_clone_id])) + 51));
+            Motion.PointInDirection(90);
+            If (floor < 4)
+            {
+                Looks.SetEffectTo(COLOR, 165);
+            }
+            Else
+            {
+                If (floor < 7)
+                {
+                    Looks.SetEffectTo(COLOR, 180);
+                }
+                Else
+                {
+                    If (floor < 12)
+                    {
+                        Looks.SetEffectTo(COLOR, 150);
+                    }
+                    Else
+                    {
+                        If (floor < 16)
+                        {
+                            Looks.SetEffectTo(COLOR, -15);
+                        }
+                        Else
+                        {
+                            If (floor < 27)
+                            {
+                                Looks.SetEffectTo(COLOR, 100);
+                            }
+                            Else
+                            {
+                                Looks.SetEffectTo(COLOR, 133);
+                            }
+                        }
+                    }
+                }
+            }
+            Looks.ChangeEffectBy(COLOR, 35);
+            If (Costume.GetNumberName(number) == 52)
+            {
+                Looks.SwitchCostumeTo(Grass);
+                If (floor < 4)
+                {
+                    Looks.SetEffectTo(COLOR, 165);
+                }
+                Else
+                {
+                    If (floor < 7)
+                    {
+                        Looks.SetEffectTo(COLOR, 180);
+                    }
+                    Else
+                    {
+                        If (floor < 12)
+                        {
+                            Looks.SetEffectTo(COLOR, 150);
+                        }
+                        Else
+                        {
+                            If (floor < 16)
+                            {
+                                Looks.SetEffectTo(COLOR, -15);
+                            }
+                            Else
+                            {
+                                If (floor < 27)
+                                {
+                                    Looks.SetEffectTo(COLOR, 100);
+                                }
+                                Else
+                                {
+                                    Looks.SetEffectTo(COLOR, 133);
+                                }
+                            }
+                        }
+                    }
+                }
+                Looks.ChangeEffectBy(COLOR, 35);
+                Motion.PointInDirection(90);
+                Pen.Stamp();
+                Looks.SetEffectTo(COLOR, 0);
+                Looks.SwitchCostumeTo(Stairs);
+            }
+            Pen.Stamp();
+            Looks.SetEffectTo(COLOR, 0);
+            If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 0)
+            {
+                Looks.SwitchCostumeTo(Weapon);
+                If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 7)
+                {
+                    Looks.SwitchCostumeTo(Shield);
+                    If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 14)
+                    {
+                        Looks.SwitchCostumeTo(Ring);
+                        If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 24)
+                        {
+                            Looks.SwitchCostumeTo(Herb);
+                            If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 32)
+                            {
+                                Looks.SwitchCostumeTo(Staff);
+                                If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 39)
+                                {
+                                    Looks.SwitchCostumeTo(Scroll);
+                                    If (mapitems[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 48)
+                                    {
+                                        Looks.SwitchCostumeTo(Onigiri);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Pen.Stamp();
+            }
+            If (monstermaploc[(Playerloc + OFFSET-GUI-B[gui_clone_id])] > 0)
+            {
+                If (Not (Sensing.KeyPressed(a)))
+                {
+                    Motion.SetRotationStyle(left-right);
+                    Looks.SwitchCostumeTo((List.IndexOf(al, monstermaploc[(Playerloc + OFFSET-GUI-B[gui_clone_id])]) + 66));
+                    Motion.PointInDirection(90);
+                    If (Motion.XPosition() < -5)
+                    {
+                        Motion.PointInDirection(-90);
+                    }
+                    Pen.Stamp();
+                }
+            }
+            If (gui_clone_id == 32)
+            {
+                Looks.SwitchCostumeTo(Wall2);
+                Pen.Stamp();
+            }
+        }
+        Motion.ChangeXBy(36);
+        Motion.SetY(152);
+    }
+    Motion.SetRotationStyle(all around);
+    Motion.GoToXY(0, 8);
+    If (PlayerDPointTile == -41)
+    {
+        Motion.PointInDirection(-45);
+    }
+    If (PlayerDPointTile == -1)
+    {
+        Motion.PointInDirection(0);
+    }
+    If (PlayerDPointTile == 39)
+    {
+        Motion.PointInDirection(45);
+    }
+    If (PlayerDPointTile == 40)
+    {
+        Motion.PointInDirection(90);
+    }
+    If (PlayerDPointTile == -40)
+    {
+        Motion.PointInDirection(-90);
+    }
+    If (PlayerDPointTile == 41)
+    {
+        Motion.PointInDirection(135);
+    }
+    If (PlayerDPointTile == 1)
+    {
+        Motion.PointInDirection(180);
+    }
+    If (PlayerDPointTile == -39)
+    {
+        Motion.PointInDirection(-135);
+    }
+    Motion.Move(((Sensing.KeyPressed(z) And (Not (Sensing.KeyPressed(x)))) * ((1 - inventoryopen) * 7)));
+    Looks.SetEffectTo(GHOST, 44);
+    If List.ContainsItem(equipped, "Sword")
+    {
+        If Operator.Contains(inventory[List.IndexOf(equipped, "Sword")], "Axe")
+        {
+            Looks.SwitchCostumeTo(Wall5);
+        }
+        Else
+        {
+            Looks.SwitchCostumeTo(Wall3);
+        }
+    }
+    Else
+    {
+        Looks.SwitchCostumeTo(Wall4);
+    }
+    Pen.Stamp();
+    Motion.PointInDirection(90);
+    Looks.Hide();
+}
+
+Define Illu1 (warp=true)
+{
+    Call Reveal(Playerloc) type("");
+    Call Reveal((Playerloc + 1)) type("");
+    Call Reveal((Playerloc + -1)) type("");
+    Call Reveal((Playerloc + -40)) type("");
+    Call Reveal((Playerloc + -41)) type("");
+    Call Reveal((Playerloc + 39)) type("");
+    Call Reveal((Playerloc + -39)) type("");
+    Call Reveal((Playerloc + 40)) type("");
+    Call Reveal((Playerloc + 41)) type("");
+}
+
+Define Illuminate (warp=false)
+{
+    Call Reveal(Playerloc) type("n");
+    Call Reveal((Playerloc - 1)) type("n");
+    Call Reveal((Playerloc - 2)) type("n");
+    Call Reveal((Playerloc - 3)) type("n");
+    Call Reveal((Playerloc + 3)) type("n");
+    Call Reveal((Playerloc + 1)) type("n");
+    Call Reveal((Playerloc + 2)) type("n");
+    Call Reveal((Playerloc - 41)) type("n");
+    Call Reveal((Playerloc - 42)) type("n");
+    Call Reveal((Playerloc - 40)) type("n");
+    Call Reveal((Playerloc - 39)) type("n");
+    Call Reveal((Playerloc - 38)) type("n");
+    Call Reveal((Playerloc - 81)) type("n");
+    Call Reveal((Playerloc - 82)) type("n");
+    Call Reveal((Playerloc - 80)) type("n");
+    Call Reveal((Playerloc - 79)) type("n");
+    Call Reveal((Playerloc - 78)) type("n");
+    Call Reveal((Playerloc + 41)) type("n");
+    Call Reveal((Playerloc + 42)) type("n");
+    Call Reveal((Playerloc + 40)) type("n");
+    Call Reveal((Playerloc + 39)) type("n");
+    Call Reveal((Playerloc + 38)) type("n");
+    Call Reveal((Playerloc + 81)) type("n");
+    Call Reveal((Playerloc + 82)) type("n");
+    Call Reveal((Playerloc + 80)) type("n");
+    Call Reveal((Playerloc + 79)) type("n");
+    Call Reveal((Playerloc + 78)) type("n");
+    Call Reveal((Playerloc - 121)) type("n");
+    Call Reveal((Playerloc - 122)) type("n");
+    Call Reveal((Playerloc - 120)) type("n");
+    Call Reveal((Playerloc - 119)) type("n");
+    Call Reveal((Playerloc - 118)) type("n");
+    Call Reveal((Playerloc + 121)) type("n");
+    Call Reveal((Playerloc + 122)) type("n");
+    Call Reveal((Playerloc + 120)) type("n");
+    Call Reveal((Playerloc + 119)) type("n");
+    Call Reveal((Playerloc + 118)) type("n");
+    Call Reveal((Playerloc - 83)) type("n");
+    Call Reveal((Playerloc - 77)) type("n");
+    Call Reveal((Playerloc + 83)) type("n");
+    Call Reveal((Playerloc + 77)) type("n");
+    Call Reveal((Playerloc - 123)) type("n");
+    Call Reveal((Playerloc - 117)) type("n");
+    Call Reveal((Playerloc + 123)) type("n");
+    Call Reveal((Playerloc + 117)) type("n");
+    Call Reveal((Playerloc - 37)) type("n");
+    Call Reveal((Playerloc + 37)) type("n");
+    Call Reveal((Playerloc - 43)) type("n");
+    Call Reveal((Playerloc + 43)) type("n");
+}
+
+Define ItemCheck(string n) (warp=true)
+{
+    counter2 = 0;
+    Repeat (2360)
+    {
+        counter2 += 1;
+        If (mapitems[counter2] > 0)
+        {
+            If (Operator.LetterOf(maps[floor], counter2) == 4)
+            {
+                List.ReplaceItem(mapitems, counter2, "");
+                List.ReplaceItem(flooritemmount, counter2, "");
+            }
+            If (n == "")
+            {
+                If ((counter2 == Playerloc) And (drop == 0))
+                {
+                    If ((flooritemmount[counter2] > 0) And (Not (((mapitems[counter2] < 15) Or ((mapitems[counter2] > 32) And (mapitems[counter2] < 40))))))
+                    {
+                        List.ReplaceItem(flooritemmount, counter2, "");
+                    }
+                    If (((List.Length(inventory) == 20) And (mapitems[counter2] < 51)) Or Sensing.KeyPressed(x))
+                    {
+                        If (Not ((att == 1)))
+                        {
+                            If (flooritemmount[counter2] > 0)
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Can't pick up ", Operator.Join(items[mapitems[counter2]], Operator.Join("+", flooritemmount[counter2]))), "."));
+                            }
+                            Else
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Can't pick up ", items[mapitems[counter2]]), "."));
+                            }
+                        }
+                    }
+                    Else
+                    {
+                        If (mapitems[counter2] > 50)
+                        {
+                        }
+                        Else
+                        {
+                            Sound.Play(Collect);
+                            List.Add(inventory, mapitems[counter2]);
+                            If (flooritemmount[counter2] < 1)
+                            {
+                                List.Add(inventorycount, "");
+                            }
+                            Else
+                            {
+                                List.Add(inventorycount, Operator.Join("+", flooritemmount[counter2]));
+                            }
+                            List.Add(equipped, 0);
+                            If (inventorycount[List.Length(inventorycount)] > 0)
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[mapitems[counter2]], Operator.Join("+", flooritemmount[counter2]))), "."));
+                            }
+                            Else
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", items[mapitems[counter2]]), "."));
+                            }
+                        }
+                        List.ReplaceItem(mapitems, counter2, "");
+                        List.ReplaceItem(flooritemmount, counter2, "");
+                    }
+                }
+            }
+        }
+    }
+    att = 0;
+}
+
+Define Movement (warp=false)
+{
+    Repeat Until ((moved == 1) Or (inventoryopen == 1))
+    {
+        Call ItemCheck("n");
+        attack = 0;
+        Pen.Clear();
+        Call PaintMap;
+        Event.Broadcast("clearclones");
+        Event.Broadcast("Paint Bottom");
+        diag = 2;
+        If (player's status < 200)
+        {
+            If Sensing.KeyPressed(d)
+            {
+                If Sensing.KeyPressed(up arrow)
+                {
+                    If Sensing.KeyPressed(right arrow)
+                    {
+                        PlayerDPointTile = 39;
+                    }
+                    Else
+                    {
+                        If Sensing.KeyPressed(left arrow)
+                        {
+                            PlayerDPointTile = -41;
+                        }
+                        Else
+                        {
+                            If (Not (Sensing.KeyPressed(s)))
+                            {
+                                PlayerDPointTile = -1;
+                            }
+                        }
+                    }
+                }
+                Else
+                {
+                    If Sensing.KeyPressed(down arrow)
+                    {
+                        If Sensing.KeyPressed(right arrow)
+                        {
+                            PlayerDPointTile = 41;
+                        }
+                        Else
+                        {
+                            If Sensing.KeyPressed(left arrow)
+                            {
+                                PlayerDPointTile = -39;
+                            }
+                            Else
+                            {
+                                If (Not (Sensing.KeyPressed(s)))
+                                {
+                                    PlayerDPointTile = 1;
+                                }
+                            }
+                        }
+                    }
+                    Else
+                    {
+                        If Sensing.KeyPressed(right arrow)
+                        {
+                            If (Not (Sensing.KeyPressed(s)))
+                            {
+                                PlayerDPointTile = 40;
+                            }
+                        }
+                        Else
+                        {
+                            If Sensing.KeyPressed(left arrow)
+                            {
+                                If (Not (Sensing.KeyPressed(s)))
+                                {
+                                    PlayerDPointTile = -40;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Else
+            {
+                If Sensing.KeyPressed(up arrow)
+                {
+                    If (Not (Sensing.KeyPressed(s)))
+                    {
+                        PlayerDPointTile = -1;
+                    }
+                    Else
+                    {
+                        diag = 0;
+                    }
+                    If Sensing.KeyPressed(right arrow)
+                    {
+                        PlayerDPointTile = 39;
+                        diag = 1;
+                    }
+                    If Sensing.KeyPressed(left arrow)
+                    {
+                        PlayerDPointTile = -41;
+                        diag = 1;
+                    }
+                    Repeat Until (Sensing.KeyPressed(x) Or (Not (Sensing.KeyPressed(up arrow))))
+                    {
+                        If Sensing.KeyPressed(right arrow)
+                        {
+                            PlayerDPointTile = 39;
+                            diag = 1;
+                        }
+                        If Sensing.KeyPressed(left arrow)
+                        {
+                            PlayerDPointTile = -41;
+                            diag = 1;
+                        }
+                    }
+                    Call REALMOVE;
+                }
+                Else
+                {
+                    If Sensing.KeyPressed(down arrow)
+                    {
+                        If (Not (Sensing.KeyPressed(s)))
+                        {
+                            PlayerDPointTile = 1;
+                        }
+                        Else
+                        {
+                            diag = 0;
+                        }
+                        If Sensing.KeyPressed(right arrow)
+                        {
+                            PlayerDPointTile = 41;
+                            diag = 1;
+                        }
+                        If Sensing.KeyPressed(left arrow)
+                        {
+                            PlayerDPointTile = -39;
+                            diag = 1;
+                        }
+                        Repeat Until (Sensing.KeyPressed(x) Or (Not (Sensing.KeyPressed(down arrow))))
+                        {
+                            If Sensing.KeyPressed(right arrow)
+                            {
+                                PlayerDPointTile = 41;
+                                diag = 1;
+                            }
+                            If Sensing.KeyPressed(left arrow)
+                            {
+                                PlayerDPointTile = -39;
+                                diag = 1;
+                            }
+                        }
+                        Call REALMOVE;
+                    }
+                    Else
+                    {
+                        If Sensing.KeyPressed(right arrow)
+                        {
+                            If (Not (Sensing.KeyPressed(s)))
+                            {
+                                PlayerDPointTile = 40;
+                            }
+                            Else
+                            {
+                                diag = 0;
+                            }
+                            If Sensing.KeyPressed(up arrow)
+                            {
+                                PlayerDPointTile = 39;
+                                diag = 1;
+                            }
+                            If Sensing.KeyPressed(down arrow)
+                            {
+                                PlayerDPointTile = 41;
+                                diag = 1;
+                            }
+                            Repeat Until (Sensing.KeyPressed(x) Or (Not (Sensing.KeyPressed(right arrow))))
+                            {
+                                If Sensing.KeyPressed(up arrow)
+                                {
+                                    PlayerDPointTile = 39;
+                                    diag = 1;
+                                }
+                                If Sensing.KeyPressed(down arrow)
+                                {
+                                    PlayerDPointTile = 41;
+                                    diag = 1;
+                                }
+                            }
+                            Call REALMOVE;
+                        }
+                        Else
+                        {
+                            If Sensing.KeyPressed(left arrow)
+                            {
+                                If (Not (Sensing.KeyPressed(s)))
+                                {
+                                    PlayerDPointTile = -40;
+                                }
+                                Else
+                                {
+                                    diag = 0;
+                                }
+                                If Sensing.KeyPressed(up arrow)
+                                {
+                                    PlayerDPointTile = -41;
+                                    diag = 1;
+                                }
+                                If Sensing.KeyPressed(down arrow)
+                                {
+                                    PlayerDPointTile = -39;
+                                    diag = 1;
+                                }
+                                Repeat Until (Sensing.KeyPressed(x) Or (Not (Sensing.KeyPressed(left arrow))))
+                                {
+                                    If Sensing.KeyPressed(up arrow)
+                                    {
+                                        PlayerDPointTile = -41;
+                                        diag = 1;
+                                    }
+                                    If Sensing.KeyPressed(down arrow)
+                                    {
+                                        PlayerDPointTile = -39;
+                                        diag = 1;
+                                    }
+                                }
+                                Call REALMOVE;
+                            }
+                            Else
+                            {
+                                drop = 0;
+                                If ((Sensing.KeyPressed(z) And (Not (Sensing.KeyPressed(x)))) And ((inventoryopen == 0) And (Not ((selectioninv2 == 2)))))
+                                {
+                                    drop = 1;
+                                    Sound.Play(Door Closing);
+                                    If (player's status > 100)
+                                    {
+                                        PlayerDPointTile = 1tiler[random];
+                                    }
+                                    If (monstermaploc[(Playerloc + PlayerDPointTile)] > "")
+                                    {
+                                        Looks.SwitchCostumeTo(monstermaploc[(Playerloc + PlayerDPointTile)]);
+                                        If ((Operator.Random(1 , (12 / ((inventory[List.IndexOf(equipped, "Armband")] == 23) + 1))) == 1) Or (inventory[List.IndexOf(equipped, "Sword")] == 1))
+                                        {
+                                            If (Operator.Random(1 , (2 * (((inventory[List.IndexOf(equipped, "Armband")] == 23) And (inventory[List.IndexOf(equipped, "Sword")] > 1)) + 1))) == 1)
+                                            {
+                                                List.Add(textlog, "Your attack missed!");
+                                                Sound.Play(Swish Effect);
+                                                dmg = 0;
+                                            }
+                                            Else
+                                            {
+                                                List.Add(textlog, "Did a critical hit!");
+                                                Sound.Play(Punch1);
+                                                Sound.Play(strong);
+                                                dmg = Operator.Round((((((inventory[List.IndexOf(equipped, "Sword")] == 7) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "G")) Or ((inventory[List.IndexOf(equipped, "Sword")] == 5) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "F"))) + 1) * ((Operator.Random(1.8 , 2) * (((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) * ((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) > 0)) + 1)) * PlayerPowerUps)));
+                                            }
+                                        }
+                                        Else
+                                        {
+                                            Sound.Play(Punch1);
+                                            If ((Operator.Random(1 , 4) == 1) And (inventory[List.IndexOf(equipped, "Sword")] == 6))
+                                            {
+                                                List.Add(textlog, "Did a critical hit!");
+                                                Sound.Play(strong);
+                                                dmg = Operator.Round((((((inventory[List.IndexOf(equipped, "Sword")] == 7) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "G")) Or ((inventory[List.IndexOf(equipped, "Sword")] == 5) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "F"))) + 1) * ((Operator.Random(1.8 , 2) * (((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) * ((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) > 0)) + 1)) * PlayerPowerUps)));
+                                            }
+                                            Else
+                                            {
+                                                dmg = Operator.Round((((((inventory[List.IndexOf(equipped, "Sword")] == 7) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "G")) Or ((inventory[List.IndexOf(equipped, "Sword")] == 5) And Operator.Contains(monster stats[(Costume.GetNumberName(number) - 23)], "F"))) + 1) * ((Operator.Random(0.9 , 1) * (((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) * ((PlayerAtk - Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 3), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 4))) > 0)) + 1)) * PlayerPowerUps)));
+                                            }
+                                        }
+                                        If (dmg > 0)
+                                        {
+                                            List.Add(textlog, Operator.Join(Operator.Join(Operator.Join("Dealt ", dmg), " damage to "), Operator.Join(MonsterNames[(Costume.GetNumberName(number) - 23)], ".")));
+                                            List.ReplaceItem(monsterhp, (Playerloc + PlayerDPointTile), (monsterhp[(Playerloc + PlayerDPointTile)] - dmg));
+                                            If (inventory[List.IndexOf(equipped, "Sword")] == 2)
+                                            {
+                                                PlayerHp += ceiling((dmg / 7));
+                                            }
+                                            If (monsterhp[(Playerloc + PlayerDPointTile)] < 1)
+                                            {
+                                                List.ReplaceItem(monstermaploc, (Playerloc + PlayerDPointTile), "");
+                                                List.ReplaceItem(monsterhp, (Playerloc + PlayerDPointTile), "");
+                                                List.ReplaceItem(Monstercondition, (Playerloc + PlayerDPointTile), "");
+                                                List.Add(textlog, Operator.Join(MonsterNames[(Costume.GetNumberName(number) - 23)], " died."));
+                                                List.Add(textlog, Operator.Join(Operator.Join("Gained ", Operator.Round(Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 8), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 9)), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 10)), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 11)))), " Exp."));
+                                                Sound.Play(PunchKill);
+                                                PlayerExp += Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 8), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 9)), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 10)), Operator.LetterOf(monster stats[(Costume.GetNumberName(number) - 23)], 11));
+                                                PlayerScorept1 += 125;
+                                                If (Operator.Random(1 , 27) == 1)
+                                                {
+                                                    counter3 = (Playerloc + PlayerDPointTile);
+                                                    If (mapitems[counter3] == "")
+                                                    {
+                                                        Call additem("r");
+                                                        List.Add(textlog, "An item was dropped.");
+                                                    }
+                                                }
+                                            }
+                                            Else
+                                            {
+                                                If ((inventory[List.IndexOf(equipped, "Sword")] == 3) And (Operator.Random(1 , 9) == 1))
+                                                {
+                                                    projectiletile = (Playerloc + PlayerDPointTile);
+                                                    If (Operator.Random(1 , 2) == 1)
+                                                    {
+                                                        List.ReplaceItem(Monstercondition, projectiletile, ((Operator.Random(1 , 2) * 95) + 15));
+                                                        If (Monstercondition[projectiletile] == 110)
+                                                        {
+                                                            Sound.Play(Confusion);
+                                                            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " was dazed"), "!"));
+                                                        }
+                                                        Else
+                                                        {
+                                                            Sound.Play(Snoring);
+                                                            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " fell asleep"), "!"));
+                                                        }
+                                                    }
+                                                    Else
+                                                    {
+                                                        If (Operator.Random(1 , 2) == 1)
+                                                        {
+                                                            If (monsterhp[projectiletile] > 99)
+                                                            {
+                                                                List.Add(textlog, "But it was nullified!");
+                                                            }
+                                                            Else
+                                                            {
+                                                                Sound.Play(Slow);
+                                                                List.ReplaceItem(Monstercondition, projectiletile, -200);
+                                                                List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " slowed down"), "."));
+                                                            }
+                                                        }
+                                                        Else
+                                                        {
+                                                            Sound.Play(charge);
+                                                            List.ReplaceItem(Monstercondition, projectiletile, Operator.Join(999, monsterhp[projectiletile]));
+                                                            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " is paralyzed"), "!"));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    moved = 1;
+                                    attack = 1;
+                                    att = 1;
+                                    Repeat Until (Not (Sensing.KeyPressed(z)))
+                                    {
+                                        Pen.Clear();
+                                        Call PaintMap;
+                                        Event.Broadcast("clearclones");
+                                        Event.Broadcast("Paint Bottom");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                If ((Sensing.KeyPressed(z) And Sensing.KeyPressed(x)) And (PlayerFull > 0))
+                {
+                    moved = 1;
+                    Event.Broadcast("Footstomp");
+                }
+                If ((Operator.LetterOf(maps[floor], Playerloc) == 4) Or (monstermaploc[Playerloc] > ""))
+                {
+                    Playerloc = prev pos;
+                    moved = 0;
+                }
+            }
+        }
+        Else
+        {
+            moved = 1;
+        }
+    }
+    If (moved == 1)
+    {
+        Call ItemCheck("");
+        drop = 0;
+        Call PastTurn;
+        player's status += -1;
+        If (player's status == 100)
+        {
+            player's status = 0;
+            List.Add(textlog, "You got oriented.");
+        }
+        If (player's status == 200)
+        {
+            player's status = 0;
+            List.Add(textlog, "You regained conciousness.");
+        }
+    }
+    moved = 0;
+}
+
+Define MoveRandom (warp=true)
+{
+    Repeat (100)
+    {
+        counter1 = 1tiler[random];
+        prev pos = Playerloc;
+        Playerloc += counter1;
+        PlayerDPointTile = counter1;
+        If ((Operator.LetterOf(maps[floor], Playerloc) == 4) Or (monstermaploc[Playerloc] > ""))
+        {
+            Playerloc = prev pos;
+            moved = 0;
+        }
+        Else
+        {
+            moved = 1;
+            Stop(this script);
+        }
+    }
+}
+
+Define PaintMap (warp=true)
+{
+    If (Not (Sensing.KeyPressed(q)))
+    {
+        Call GUI;
+    }
+    If ((mapof == 0) Or Sensing.KeyPressed(q))
+    {
+        Looks.SetEffectTo(GHOST, 77);
+        Looks.Show();
+        Motion.GoToXY(-238, 178);
+        monsternearby = 0;
+        counter2 = 0;
+        Repeat (59)
+        {
+            Looks.SwitchCostumeTo(%);
+            Looks.SetSizeTo(55);
+            Motion.SetY(178);
+            Motion.ChangeXBy(8);
+            Motion.PointInDirection(90);
+            Repeat (40)
+            {
+                Motion.ChangeYBy(-8);
+                counter2 += 1;
+                Looks.ClearGraphicEffects();
+                If ((PlayerDPointTile + Playerloc) == counter2)
+                {
+                }
+                Looks.SwitchCostumeTo((Operator.LetterOf(maps[floor], counter2) + 10));
+                If (Not (List.ContainsItem(revealed tiles, counter2)))
+                {
+                    Looks.SwitchCostumeTo( );
+                }
+                Motion.PointInDirection(90);
+                Looks.SetEffectTo(GHOST, (45 * (Not (Sensing.KeyPressed(q)))));
+                Pen.Stamp();
+                Looks.ClearGraphicEffects();
+                defnode = 0;
+                If (mapitems[counter2] > 0)
+                {
+                    Looks.SwitchCostumeTo(w);
+                    defnode = 1;
+                }
+                If ((monstermaploc[counter2] > "") And List.ContainsItem(reveal, (counter2 - Playerloc)))
+                {
+                    Looks.SwitchCostumeTo(B);
+                    defnode = 1;
+                    monsternearby = 1;
+                }
+                If ((monstermaploc[counter2] > "") And (floorlight == 1))
+                {
+                    Looks.SwitchCostumeTo(B);
+                    defnode = 1;
+                }
+                If (Not (List.ContainsItem(revealed tiles, counter2)))
+                {
+                    Looks.SwitchCostumeTo( );
+                }
+                If ((monstermaploc[counter2] > "") And (inventory[List.IndexOf(equipped, "Armband")] == 21))
+                {
+                    defnode = 1;
+                    Looks.SwitchCostumeTo(B);
+                }
+                If (((mapitems[counter2] > 0) And (inventory[List.IndexOf(equipped, "Armband")] == 24)) And (Not ((List.ContainsItem(reveal, (counter2 - Playerloc)) And (monstermaploc[counter2] > "")))))
+                {
+                    Looks.SwitchCostumeTo(w);
+                    defnode = 1;
+                }
+                If (counter2 == Playerloc)
+                {
+                    defnode = 1;
+                    If Sensing.KeyPressed(s)
+                    {
+                        Motion.PointInDirection(90);
+                        Looks.SwitchCostumeTo($);
+                        If ((Sensing.Timer() % 1) < 0.4)
+                        {
+                            Looks.SwitchCostumeTo(&);
+                        }
+                        Looks.SetEffectTo(GHOST, (32 * (Not (Sensing.KeyPressed(q)))));
+                        Pen.Stamp();
+                    }
+                    Looks.SwitchCostumeTo(@);
+                    If Sensing.KeyPressed(d)
+                    {
+                        Looks.ChangeEffectBy(BRIGHTNESS, 33);
+                    }
+                    If (PlayerDPointTile == -41)
+                    {
+                        Motion.PointInDirection(-45);
+                    }
+                    If (PlayerDPointTile == -1)
+                    {
+                        Motion.PointInDirection(0);
+                    }
+                    If (PlayerDPointTile == 39)
+                    {
+                        Motion.PointInDirection(45);
+                    }
+                    If (PlayerDPointTile == 40)
+                    {
+                        Motion.PointInDirection(90);
+                    }
+                    If (PlayerDPointTile == -40)
+                    {
+                        Motion.PointInDirection(-90);
+                    }
+                    If (PlayerDPointTile == 41)
+                    {
+                        Motion.PointInDirection(135);
+                    }
+                    If (PlayerDPointTile == 1)
+                    {
+                        Motion.PointInDirection(180);
+                    }
+                    If (PlayerDPointTile == -39)
+                    {
+                        Motion.PointInDirection(-135);
+                    }
+                }
+                If ((Costume.GetNumberName(number) == 12) Or (Costume.GetNumberName(number) == 13))
+                {
+                }
+                If (((Motion.YPosition() < 137) And (Motion.YPosition() > -137)) And (defnode == 1))
+                {
+                    If (Not ((Costume.GetNumberName(name) == "@")))
+                    {
+                        Motion.PointInDirection(90);
+                    }
+                    Looks.SetEffectTo(GHOST, (52 * (Not (Sensing.KeyPressed(q)))));
+                    Pen.Stamp();
+                }
+            }
+        }
+        Looks.Hide();
+    }
+}
+
+Define PastTurn (warp=false)
+{
+    turn += 1;
+    Event.Broadcast("EnemyMovement");
+    Control.Wait(0);
+    Event.Broadcast("clearclones");
+    Event.Broadcast("Paint Bottom");
+    Pen.Clear();
+    Call PaintMap;
+    Wait Until ((Sensing.Timer() > (0.15 * (((monsternearby == 1) And Sensing.KeyPressed(x)) + 1))) Or (Sensing.KeyPressed(x) And (Not (Sensing.KeyPressed(z)))));
+    Sensing.ResetTimer();
+    If ((turn % (((6 / (((inventory[List.IndexOf(equipped, "Armband")] == 20) * 2) + 1)) / ((inventory[List.IndexOf(equipped, "Shield")] == 12) + 1)) * ((inventory[List.IndexOf(equipped, "Shield")] == 13) + 1))) == 0)
+    {
+        If (PlayerFull > 0)
+        {
+            PlayerFull += -1;
+            If (PlayerFull == 20)
+            {
+                List.Add(textlog, "You're getting hungry...");
+                Sound.Play(Growl);
+            }
+            If (PlayerFull == 10)
+            {
+                List.Add(textlog, "You're so hungry, you're feeling dizzy.");
+                Sound.Play(Growl);
+            }
+            If (PlayerFull == 0)
+            {
+                List.Add(textlog, "Oh no! You're wasting away!");
+                Sound.Play(Growl);
+            }
+        }
+    }
+    Control.Wait(0);
+    If (PlayerHp < 1)
+    {
+        List.Add(textlog, "You died.");
+        PlayerHp = 0;
+        Repeat (30)
+        {
+            Event.Broadcast("clearclones");
+            Event.Broadcast("Paint Bottom");
+            Pen.Clear();
+            Call PaintMap;
+        }
+        If List.ContainsItem(inventory, 30)
+        {
+            List.DeleteItem(inventorycount, List.IndexOf(inventory, 30));
+            Sound.Play(Revive);
+            List.DeleteItem(equipped, List.IndexOf(inventory, 30));
+            List.DeleteItem(inventory, List.IndexOf(inventory, 30));
+            PlayerHp = PlayerMaxHp;
+            PlayerFull = 100;
+            List.Add(textlog, "Revival Herb brought you back!");
+            List.Add(textlog, "Revival Herb disappeared.");
+            player's status = 0;
+        }
+        Else
+        {
+            Sound.Play(Game Over);
+            List.Add(textlog, Operator.Join("Press R to play again. Score: ", ((PlayerScorept1 + PlayerExp) + ((PlayerLevel * 1000) + (floor * 12345)))));
+            Repeat (99)
+            {
+                Event.Broadcast("clearclones");
+                Event.Broadcast("Paint Bottom");
+                Pen.Clear();
+                Call PaintMap;
+            }
+            Wait Until (1 == 0);
+        }
+    }
+    If (PlayerScorept1 > 1)
+    {
+        PlayerScorept1 += -1;
+    }
+    If (PlayerFull < 1)
+    {
+        List.Add(textlog, foodquotes[((turn % 2) + 1)]);
+        PlayerHp += -1;
+    }
+    Else
+    {
+        If (inventory[List.IndexOf(equipped, "Armband")] == 20)
+        {
+            PlayerHp += 6;
+        }
+        Else
+        {
+            PlayerHp += (floor((turn * (PlayerMaxHp / 120))) - floor(((turn - 1) * (PlayerMaxHp / 120))));
+        }
+    }
+    If (PlayerHp > PlayerMaxHp)
+    {
+        PlayerHp = PlayerMaxHp;
+    }
+    If ((turn % (40 - Operator.Round((floor / 2)))) == 1)
+    {
+        Event.Broadcast("Monster");
+    }
+    If (inventory[List.IndexOf(equipped, "Armband")] == 22)
+    {
+        PlayerExp += 1;
+    }
+}
+
+Define REALMOVE (warp=false)
+{
+    If (player's status > 100)
+    {
+        Call MoveRandom;
+    }
+    Else
+    {
+        If (Not ((Sensing.KeyPressed(s) And (((PlayerDPointTile == 40) Or (PlayerDPointTile == -40)) Or ((PlayerDPointTile == 1) Or (PlayerDPointTile == -1))))))
+        {
+            If (diag > 0)
+            {
+                Playerloc += PlayerDPointTile;
+                moved = 1;
+            }
+        }
+    }
+}
+
+Define Reveal(string number or text) type(string type) (warp=true)
+{
+    If (Not (List.ContainsItem(revealed tiles, number or text)))
+    {
+        List.Add(revealed tiles, number or text);
+    }
+}
+
+Define RevealMap (warp=true)
+{
+    revealloc = 0;
+    floorlight = 1;
+    Repeat (2360)
+    {
+        revealloc += 1;
+        If (Not ((Operator.LetterOf(maps[floor], revealloc) == 4)))
+        {
+            Call Reveal(revealloc) type("");
+            Call Reveal((revealloc - 1)) type("");
+            Call Reveal((revealloc - 2)) type("");
+            Call Reveal((revealloc - 3)) type("");
+            Call Reveal((revealloc + 3)) type("");
+            Call Reveal((revealloc + 1)) type("");
+            Call Reveal((revealloc + 2)) type("");
+            Call Reveal((revealloc - 41)) type("");
+            Call Reveal((revealloc - 42)) type("");
+            Call Reveal((revealloc - 40)) type("");
+            Call Reveal((revealloc - 39)) type("");
+            Call Reveal((revealloc - 38)) type("");
+            Call Reveal((revealloc - 81)) type("");
+            Call Reveal((revealloc - 82)) type("");
+            Call Reveal((revealloc - 80)) type("");
+            Call Reveal((revealloc - 79)) type("");
+            Call Reveal((revealloc - 78)) type("");
+            Call Reveal((revealloc + 41)) type("");
+            Call Reveal((revealloc + 42)) type("");
+            Call Reveal((revealloc + 40)) type("");
+            Call Reveal((revealloc + 39)) type("");
+            Call Reveal((revealloc + 38)) type("");
+            Call Reveal((revealloc + 81)) type("");
+            Call Reveal((revealloc + 82)) type("");
+            Call Reveal((revealloc + 80)) type("");
+            Call Reveal((revealloc + 79)) type("");
+            Call Reveal((revealloc + 78)) type("");
+            Call Reveal((revealloc - 121)) type("");
+            Call Reveal((revealloc - 122)) type("");
+            Call Reveal((revealloc - 120)) type("");
+            Call Reveal((revealloc - 119)) type("");
+            Call Reveal((revealloc - 118)) type("");
+            Call Reveal((revealloc + 121)) type("");
+            Call Reveal((revealloc + 122)) type("");
+            Call Reveal((revealloc + 120)) type("");
+            Call Reveal((revealloc + 119)) type("");
+            Call Reveal((revealloc + 118)) type("");
+            Call Reveal((revealloc - 83)) type("");
+            Call Reveal((revealloc - 77)) type("");
+            Call Reveal((revealloc + 83)) type("");
+            Call Reveal((revealloc + 77)) type("");
+            Call Reveal((revealloc - 123)) type("");
+            Call Reveal((revealloc - 117)) type("");
+            Call Reveal((revealloc + 123)) type("");
+            Call Reveal((revealloc + 117)) type("");
+            Call Reveal((revealloc - 37)) type("");
+            Call Reveal((revealloc + 37)) type("");
+            Call Reveal((revealloc - 43)) type("");
+            Call Reveal((revealloc + 43)) type("");
+        }
+    }
+}
+
+
+//----- Costumes ------------------------------------------------------------------------------------------------------
+
+ .png
+#.png
+$.svg
+%.png
+&.svg
+..png
+0.svg
+1.svg
+2.svg
+3.svg
+4.svg
+5.svg
+6.svg
+7.svg
+8.svg
+9.svg
+=.svg
+@.svg
+A.svg
+a.svg
+Ant.png
+B.svg
+Bee.png
+C.svg
+c.svg
+Cursister.png
+D.svg
+d.svg
+Dragon.png
+E.svg
+Eyeball.png
+F.svg
+Firepuff.png
+G.svg
+God.png
+Grass.png
+Grass2.png
+H.svg
+h.svg
+Hen.png
+Herb.png
+I.svg
+image (36).png
+Immunacrab.png
+Immunacrab2.png
+Immunacrab3.png
+Immunacrab4.png
+Immunacrab5.png
+Immunacrab6.png
+Immunacrab7.png
+Immunacrab8.png
+Immunacrab9.png
+Immunacrab10.png
+Immunacrab11.png
+Immunacrab12.png
+Immunacrab13.png
+Immunacrab14.png
+J.svg
+Jolteodon.png
+K.svg
+Killer.png
+L.svg
+M.svg
+N.svg
+O.svg
+o.svg
+Onigiri.png
+P.svg
+Q.svg
+R.svg
+Ring.png
+S.svg
+s.svg
+Scroll.png
+Shield.png
+Staff.png
+Stairs.png
+T.svg
+U.svg
+V.svg
+Void.png
+W.svg
+w.svg
+Wall.png
+Wall2.png
+Wall3.png
+Wall4.png
+Wall5.png
+Weapon.png
+X.svg
+xpaxe.svg
+Y.svg
+Z.svg
+
+
+//----- Sounds --------------------------------------------------------------------------------------------------------
+
+charge.wav
+Collect.wav
+Confusion.wav
+Door Closing.wav
+Footsteps.wav
+Game Over.wav
+Growl.wav
+Punch1.wav
+PunchKill.wav
+Revive.wav
+Slow.wav
+Snoring.wav
+strong.wav
+Swish Effect.wav

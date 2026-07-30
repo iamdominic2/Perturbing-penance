@@ -1,0 +1,1137 @@
+//----- Broadcast received events -------------------------------------------------------------------------------------
+
+WhenBroadcastReceived(clearclones)
+{
+    Control.DeleteThisClone();
+}
+
+WhenBroadcastReceived(GF)
+{
+    scrollingoffset = 0;
+}
+
+WhenBroadcastReceived(GF)
+{
+    Forever
+    {
+        If (inventoryopen == 1)
+        {
+            If Sensing.KeyPressed(x)
+            {
+                If (selectioninv == 1)
+                {
+                    Sound.Play(cclick2);
+                }
+                Control.Wait(0);
+                selectioninv = 0;
+                Wait Until (Not (Sensing.KeyPressed(x)));
+            }
+            If Sensing.KeyPressed(z)
+            {
+                If (selectioninv == 0)
+                {
+                    selectioninv = 1;
+                    selectioninv2 = 1;
+                    Sound.Play(cclick);
+                    Wait Until (Not (Sensing.KeyPressed(z)));
+                }
+                Else
+                {
+                    If (selectioninv2 == 3)
+                    {
+                        List.Add(textlog, items[inventory[ihover]]);
+                        List.Add(textlog, ItemDesc[inventory[ihover]]);
+                        Wait Until (Not (Sensing.KeyPressed(z)));
+                    }
+                    If (selectioninv2 == 2)
+                    {
+                        If (mapitems[Playerloc] == "")
+                        {
+                            List.Add(textlog, Operator.Join(Operator.Join("Dropped ", Operator.Join(items[inventory[ihover]], inventorycount[ihover])), "."));
+                            List.ReplaceItem(mapitems, Playerloc, inventory[ihover]);
+                            List.ReplaceItem(flooritemmount, Playerloc, Operator.Round(inventorycount[ihover]));
+                            List.DeleteItem(inventory, ihover);
+                            List.DeleteItem(inventorycount, ihover);
+                            List.DeleteItem(equipped, ihover);
+                            Event.Broadcast("PastTurn");
+                            inventoryopen = 2;
+                            Control.Wait(0);
+                            Wait Until (Not (Sensing.KeyPressed(z)));
+                            selectioninv = 0;
+                            selectioninv2 = 1;
+                            inventoryopen = 0;
+                        }
+                        Else
+                        {
+                            Sound.Play(Collect);
+                            List.Add(inventory, mapitems[Playerloc]);
+                            If (flooritemmount[Playerloc] < 1)
+                            {
+                                List.Add(inventorycount, "");
+                            }
+                            Else
+                            {
+                                List.Add(inventorycount, Operator.Join("+", flooritemmount[Playerloc]));
+                            }
+                            List.Add(equipped, 0);
+                            If (inventorycount[List.Length(inventorycount)] > 0)
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Dropped ", Operator.Join(items[mapitems[Playerloc]], Operator.Join("+", flooritemmount[Playerloc]))), ""));
+                            }
+                            Else
+                            {
+                                List.Add(textlog, Operator.Join(Operator.Join("Dropped ", items[mapitems[Playerloc]]), ""));
+                            }
+                            List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[inventory[ihover]], inventorycount[ihover])), "."));
+                            List.ReplaceItem(mapitems, Playerloc, inventory[ihover]);
+                            List.ReplaceItem(flooritemmount, Playerloc, Operator.Round(inventorycount[ihover]));
+                            List.DeleteItem(inventory, ihover);
+                            List.DeleteItem(inventorycount, ihover);
+                            List.DeleteItem(equipped, ihover);
+                            Event.Broadcast("PastTurn");
+                            inventoryopen = 2;
+                            Control.Wait(0);
+                            Wait Until (Not (Sensing.KeyPressed(z)));
+                            selectioninv = 0;
+                            selectioninv2 = 1;
+                            inventoryopen = 0;
+                        }
+                    }
+                    Else
+                    {
+                        If (selectioninv2 == 1)
+                        {
+                            If (equipped[ihover] > 0)
+                            {
+                                Sound.Play(Unequip);
+                                List.Add(textlog, Operator.Join("You ", Operator.Join("unequiped", Operator.Join(" ", Operator.Join(Operator.Join(items[inventory[ihover]], inventorycount[ihover]), ".")))));
+                            }
+                            Else
+                            {
+                                List.Add(textlog, Operator.Join("You ", Operator.Join(PastVerbs[List.IndexOf(PresentVerbs, itemverb[inventory[ihover]])], Operator.Join(" ", Operator.Join(Operator.Join(items[inventory[ihover]], inventorycount[ihover]), ".")))));
+                            }
+                            If (itemverb[inventory[ihover]] == "equip")
+                            {
+                                Sound.Play(Equip);
+                            }
+                            If (itemverb[inventory[ihover]] == "eat")
+                            {
+                                Sound.Play(Chomp);
+                            }
+                            If (itemverb[inventory[ihover]] == "read")
+                            {
+                                Sound.Play(Read);
+                            }
+                            If (inventory[ihover] == 49)
+                            {
+                                If (PlayerFull < (PlayerMaxFull - 50))
+                                {
+                                    PlayerFull += 50;
+                                    List.Add(textlog, "Fullness increased.");
+                                }
+                                Else
+                                {
+                                    If (PlayerFull == PlayerMaxFull)
+                                    {
+                                        PlayerMaxFull += 2;
+                                        PlayerFull += 2;
+                                        List.Add(textlog, "Maximum fullness increased by 2.");
+                                    }
+                                    Else
+                                    {
+                                        PlayerFull = PlayerMaxFull;
+                                        List.Add(textlog, "You're totally full.");
+                                    }
+                                }
+                            }
+                            Else
+                            {
+                                If (inventory[ihover] == 50)
+                                {
+                                    If (PlayerFull == PlayerMaxFull)
+                                    {
+                                        PlayerMaxFull += 5;
+                                        PlayerFull += 5;
+                                        List.Add(textlog, "Maximum fullness increased by 5.");
+                                    }
+                                    Else
+                                    {
+                                        PlayerFull = PlayerMaxFull;
+                                        List.Add(textlog, "You're totally full.");
+                                    }
+                                }
+                                Else
+                                {
+                                    If (inventory[ihover] == 25)
+                                    {
+                                        If (PlayerHp == PlayerMaxHp)
+                                        {
+                                            PlayerAdditionalHp += 2;
+                                            PlayerMaxHp += 2;
+                                            List.Add(textlog, "Max HP rose by 2.");
+                                        }
+                                        Else
+                                        {
+                                            List.Add(textlog, "Recovered 40 HP.");
+                                        }
+                                        PlayerHp += 40;
+                                        If (PlayerHp > PlayerMaxHp)
+                                        {
+                                            PlayerHp = PlayerMaxHp;
+                                        }
+                                    }
+                                    Else
+                                    {
+                                        If (inventory[ihover] == 26)
+                                        {
+                                            If (PlayerHp == PlayerMaxHp)
+                                            {
+                                                PlayerAdditionalHp += 3;
+                                                PlayerMaxHp += 3;
+                                                List.Add(textlog, "Max HP rose by 3.");
+                                            }
+                                            Else
+                                            {
+                                                List.Add(textlog, "Recovered 100 HP.");
+                                            }
+                                            PlayerHp += 100;
+                                            If (PlayerHp > PlayerMaxHp)
+                                            {
+                                                PlayerHp = PlayerMaxHp;
+                                            }
+                                        }
+                                        Else
+                                        {
+                                            If (inventory[ihover] == 27)
+                                            {
+                                                List.Add(textlog, "Max HP rose by 5.");
+                                                PlayerAdditionalHp += 5;
+                                                PlayerHp += 5;
+                                            }
+                                            Else
+                                            {
+                                                If (inventory[ihover] == 31)
+                                                {
+                                                    PlayerExp = exp table[PlayerLevel];
+                                                }
+                                                Else
+                                                {
+                                                    If (inventory[ihover] == 32)
+                                                    {
+                                                        List.Add(textlog, "Power rose by 1.");
+                                                        PlayerPower += 1;
+                                                    }
+                                                    Else
+                                                    {
+                                                        If (inventory[ihover] == 40)
+                                                        {
+                                                            List.Add(textlog, "You can now see the layout of the floor.");
+                                                            floorlight = 1;
+                                                            Call RevealMap;
+                                                        }
+                                                        Else
+                                                        {
+                                                            If (inventory[ihover] < 8)
+                                                            {
+                                                                If (equipped[ihover] > 0)
+                                                                {
+                                                                    List.ReplaceItem(equipped, List.IndexOf(equipped, "Sword"), 0);
+                                                                }
+                                                                Else
+                                                                {
+                                                                    List.ReplaceItem(equipped, List.IndexOf(equipped, "Sword"), 0);
+                                                                    List.ReplaceItem(equipped, ihover, "Sword");
+                                                                }
+                                                            }
+                                                            Else
+                                                            {
+                                                                If (inventory[ihover] < 15)
+                                                                {
+                                                                    If (equipped[ihover] > 0)
+                                                                    {
+                                                                        List.ReplaceItem(equipped, List.IndexOf(equipped, "Shield"), 0);
+                                                                    }
+                                                                    Else
+                                                                    {
+                                                                        List.ReplaceItem(equipped, List.IndexOf(equipped, "Shield"), 0);
+                                                                        List.ReplaceItem(equipped, ihover, "Shield");
+                                                                    }
+                                                                }
+                                                                Else
+                                                                {
+                                                                    If (inventory[ihover] < 25)
+                                                                    {
+                                                                        If (equipped[ihover] > 0)
+                                                                        {
+                                                                            List.ReplaceItem(equipped, List.IndexOf(equipped, "Armband"), 0);
+                                                                        }
+                                                                        Else
+                                                                        {
+                                                                            List.ReplaceItem(equipped, List.IndexOf(equipped, "Armband"), 0);
+                                                                            List.ReplaceItem(equipped, ihover, "Armband");
+                                                                        }
+                                                                    }
+                                                                    Else
+                                                                    {
+                                                                        If (inventory[ihover] == 48)
+                                                                        {
+                                                                            List.Add(textlog, "Your attack power increased.");
+                                                                            PlayerPowerUps += 0.5;
+                                                                        }
+                                                                        Else
+                                                                        {
+                                                                            If (inventory[ihover] == 28)
+                                                                            {
+                                                                                Call Warp;
+                                                                                Playerloc = counter1;
+                                                                                List.Add(textlog, "You warped.");
+                                                                            }
+                                                                            Else
+                                                                            {
+                                                                                If (inventory[ihover] == 41)
+                                                                                {
+                                                                                    List.ReplaceItem(inventorycount, List.IndexOf(equipped, "Sword"), Operator.Join("+", (1 + inventorycount[List.IndexOf(equipped, "Sword")])));
+                                                                                    If (List.IndexOf(equipped, "Sword") == 0)
+                                                                                    {
+                                                                                        List.Add(textlog, "Could not upgrade your weapon.");
+                                                                                    }
+                                                                                    Else
+                                                                                    {
+                                                                                        List.Add(textlog, "Equipped weapon upgraded.");
+                                                                                        If (Operator.Random(1 , 13) == 1)
+                                                                                        {
+                                                                                            List.Add(textlog, "Lucky! Weapon was further strengthened.");
+                                                                                            List.ReplaceItem(inventorycount, List.IndexOf(equipped, "Sword"), Operator.Join("+", (2 + inventorycount[List.IndexOf(equipped, "Sword")])));
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                Else
+                                                                                {
+                                                                                    If (inventory[ihover] == 42)
+                                                                                    {
+                                                                                        List.ReplaceItem(inventorycount, List.IndexOf(equipped, "Shield"), Operator.Join("+", (1 + inventorycount[List.IndexOf(equipped, "Shield")])));
+                                                                                        If (List.IndexOf(equipped, "Shield") == 0)
+                                                                                        {
+                                                                                            List.Add(textlog, "Could not upgrade your shield.");
+                                                                                        }
+                                                                                        Else
+                                                                                        {
+                                                                                            List.Add(textlog, "Equipped shield upgraded.");
+                                                                                            If (Operator.Random(1 , 13) == 1)
+                                                                                            {
+                                                                                                List.Add(textlog, "Lucky! Shield was further strengthened.");
+                                                                                                List.ReplaceItem(inventorycount, List.IndexOf(equipped, "Shield"), Operator.Join("+", (2 + inventorycount[List.IndexOf(equipped, "Shield")])));
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    Else
+                                                                                    {
+                                                                                        If (inventory[ihover] == 47)
+                                                                                        {
+                                                                                            List.Add(textlog, "You exploded!");
+                                                                                            List.Add(textlog, Operator.Join("Took ", Operator.Join(Operator.Round((PlayerHp / (2 * ((inventory[List.IndexOf(equipped, "Shield")] == 14) + 1)))), " damage.")));
+                                                                                            PlayerHp += Operator.Round((PlayerHp / (-2 * ((inventory[List.IndexOf(equipped, "Shield")] == 14) + 1))));
+                                                                                            counter1 = 0;
+                                                                                            Call Explosion;
+                                                                                        }
+                                                                                        Else
+                                                                                        {
+                                                                                            If (inventory[ihover] == 46)
+                                                                                            {
+                                                                                                Sound.Play(Lightning);
+                                                                                                Call Lightning;
+                                                                                            }
+                                                                                            Else
+                                                                                            {
+                                                                                                If (inventory[ihover] == 44)
+                                                                                                {
+                                                                                                    Sound.Play(Snoring);
+                                                                                                    Call Scatter(210) text(" fell asleep!");
+                                                                                                }
+                                                                                                Else
+                                                                                                {
+                                                                                                    If (inventory[ihover] == 43)
+                                                                                                    {
+                                                                                                        Sound.Play(Confusion);
+                                                                                                        Call Scatter(116) text(" was dazed!");
+                                                                                                    }
+                                                                                                    Else
+                                                                                                    {
+                                                                                                        If (inventory[ihover] == 45)
+                                                                                                        {
+                                                                                                            List.Add(textlog, "Recovered HP.");
+                                                                                                            PlayerHp = PlayerMaxHp;
+                                                                                                            Call Paralyze nearby;
+                                                                                                            If (player's status > 1)
+                                                                                                            {
+                                                                                                                player's status = 0;
+                                                                                                                List.Add(textlog, "You got oriented.");
+                                                                                                            }
+                                                                                                            If (PlayerPower < 8)
+                                                                                                            {
+                                                                                                                PlayerPower = 8;
+                                                                                                                List.Add(textlog, "Power returned to normal.");
+                                                                                                            }
+                                                                                                            If (PlayerFull < 1)
+                                                                                                            {
+                                                                                                                PlayerFull = PlayerMaxFull;
+                                                                                                                List.Add(textlog, "You're totally full.");
+                                                                                                            }
+                                                                                                        }
+                                                                                                        Else
+                                                                                                        {
+                                                                                                            If List.ContainsItem(projectile items, inventory[ihover])
+                                                                                                            {
+                                                                                                                projectiletile = Playerloc;
+                                                                                                                Call Fire Projectile;
+                                                                                                            }
+                                                                                                            Else
+                                                                                                            {
+                                                                                                                If (inventory[ihover] == 30)
+                                                                                                                {
+                                                                                                                    List.Add(textlog, "You should carry this, as opposed to eating it.");
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            PlayerWeaponStrength = (((weapon/shield power[inventory[List.IndexOf(equipped, "Weapon")]] + inventorycount[List.IndexOf(equipped, "Weapon")]) * 1) / 1.25);
+                            PlayerShieldStrength = (((weapon/shield power[inventory[List.IndexOf(equipped, "Shield")]] + inventorycount[List.IndexOf(equipped, "Shield")]) * 1) / 1.5625);
+                            Event.Broadcast("PastTurn");
+                            If ((itemverb[inventory[ihover]] == "Eat") And (inventory[ihover] < 48))
+                            {
+                                If (PlayerFull < (PlayerMaxFull - 5))
+                                {
+                                    PlayerFull += 5;
+                                }
+                                Else
+                                {
+                                    PlayerFull = PlayerMaxFull;
+                                }
+                            }
+                            If (itemverb[inventory[ihover]] == "Swing")
+                            {
+                                Sound.Play(Swish Effect2);
+                                List.ReplaceItem(inventorycount, ihover, Operator.Join("+", (inventorycount[ihover] - 1)));
+                                If (inventorycount[ihover] < 1)
+                                {
+                                    List.Add(textlog, "The staff broke.");
+                                    List.DeleteItem(inventory, ihover);
+                                    List.DeleteItem(inventorycount, ihover);
+                                    List.DeleteItem(equipped, ihover);
+                                }
+                            }
+                            If ((itemverb[inventory[ihover]] == "Eat") Or (itemverb[inventory[ihover]] == "Read"))
+                            {
+                                List.DeleteItem(inventory, ihover);
+                                List.DeleteItem(inventorycount, ihover);
+                                List.DeleteItem(equipped, ihover);
+                            }
+                            inventoryopen = 2;
+                            Control.Wait(0);
+                            Wait Until (Not (Sensing.KeyPressed(z)));
+                            selectioninv = 0;
+                            selectioninv2 = 1;
+                            inventoryopen = 0;
+                        }
+                    }
+                }
+            }
+            If (selectioninv == 1)
+            {
+                If (Sensing.KeyPressed(down arrow) And (selectioninv2 < 3))
+                {
+                    selectioninv2 += 1;
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(down arrow)));
+                }
+                If (Sensing.KeyPressed(up arrow) And (selectioninv2 > 1))
+                {
+                    selectioninv2 += -1;
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(up arrow)));
+                }
+            }
+            Else
+            {
+                If (Sensing.KeyPressed(down arrow) And List.ContainsItem(downhover, ihover))
+                {
+                    ihover += 1;
+                    If (List.Length(items) < ihover)
+                    {
+                        ihover += -1;
+                    }
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(down arrow)));
+                }
+                If (Sensing.KeyPressed(up arrow) And List.ContainsItem(uphover, ihover))
+                {
+                    ihover += -1;
+                    If (List.Length(items) < ihover)
+                    {
+                        ihover += 1;
+                    }
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(up arrow)));
+                }
+                If (Sensing.KeyPressed(right arrow) And (ihover < 17))
+                {
+                    ihover += 4;
+                    If (List.Length(items) < ihover)
+                    {
+                        ihover += -4;
+                    }
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(right arrow)));
+                }
+                If (Sensing.KeyPressed(left arrow) And (ihover > 4))
+                {
+                    ihover += -4;
+                    If (List.Length(items) < ihover)
+                    {
+                        ihover += 4;
+                    }
+                    Sound.Play(beep);
+                    Wait Until (Not (Sensing.KeyPressed(left arrow)));
+                }
+            }
+        }
+    }
+}
+
+WhenBroadcastReceived(GF)
+{
+    List.DeleteAll(equipped);
+    Forever
+    {
+        PlayerWeaponStrength = (inventorycount[List.IndexOf(equipped, "Sword")] + weapon/shield power[inventory[List.IndexOf(equipped, "Sword")]]);
+        PlayerShieldStrength = (inventorycount[List.IndexOf(equipped, "Shield")] + weapon/shield power[inventory[List.IndexOf(equipped, "Shield")]]);
+    }
+}
+
+WhenBroadcastReceived(GF)
+{
+    Forever
+    {
+        If (Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))
+        {
+            inventoryopen = (1 - inventoryopen);
+            selectioninv = 0;
+            ihover = 1;
+            selectioninv2 = 1;
+            Sound.Play((21 + inventoryopen));
+            Wait Until (Not ((Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))));
+        }
+        If ((Sensing.KeyPressed(x) Or Sensing.KeyPressed(x)) And (inventoryopen == 1))
+        {
+            If (selectioninv == 0)
+            {
+                inventoryopen = (1 - inventoryopen);
+                selectioninv = 0;
+                ihover = 1;
+                selectioninv2 = 1;
+                Sound.Play((21 + inventoryopen));
+            }
+            Wait Until (Not (Sensing.KeyPressed(x)));
+        }
+    }
+}
+
+WhenBroadcastReceived(Paint Bottom)
+{
+    Looks.SetEffectTo(BRIGHTNESS, 100);
+    Looks.SetEffectTo(GHOST, ((inventoryopen * -999) + 30));
+    Call I item(1) at(-235)(170);
+    Call I item(2) at(-235)(160);
+    Call I item(3) at(-235)(150);
+    Call I item(4) at(-235)(140);
+    Call I item(5) at(-150)(170);
+    Call I item(6) at(-150)(160);
+    Call I item(7) at(-150)(150);
+    Call I item(8) at(-150)(140);
+    Call I item(9) at(-65)(170);
+    Call I item(10) at(-65)(160);
+    Call I item(11) at(-65)(150);
+    Call I item(12) at(-65)(140);
+    Call I item(13) at(20)(170);
+    Call I item(14) at(20)(160);
+    Call I item(15) at(20)(150);
+    Call I item(16) at(20)(140);
+    Call I item(17) at(105)(170);
+    Call I item(18) at(105)(160);
+    Call I item(19) at(105)(150);
+    Call I item(20) at(105)(140);
+    Looks.ClearGraphicEffects();
+    If (inventoryopen == 1)
+    {
+        If (selectioninv == 1)
+        {
+            If (inventory[ihover] == "")
+            {
+                selectioninv = 0;
+            }
+            Else
+            {
+                If (selectioninv2 == 1)
+                {
+                    If (equipped[ihover] > 0)
+                    {
+                        Call Write(Operator.Join(">", "Unequip")) at(181.2)(170);
+                    }
+                    Else
+                    {
+                        Call Write(Operator.Join(">", itemverb[inventory[ihover]])) at(181.2)(170);
+                    }
+                }
+                Else
+                {
+                    If (equipped[ihover] > 0)
+                    {
+                        Call Write("Unequip") at(181.2)(170);
+                    }
+                    Else
+                    {
+                        Call Write(itemverb[inventory[ihover]]) at(185)(170);
+                    }
+                }
+                If (selectioninv2 == 2)
+                {
+                    If (mapitems[Playerloc] == "")
+                    {
+                        Call Write(">Drop") at(181.2)(160);
+                    }
+                    Else
+                    {
+                        Call Write(">Swap") at(181.2)(160);
+                    }
+                }
+                Else
+                {
+                    If (mapitems[Playerloc] == "")
+                    {
+                        Call Write("Drop") at(185)(160);
+                    }
+                    Else
+                    {
+                        Call Write("Swap") at(185)(160);
+                    }
+                }
+                If (selectioninv2 == 3)
+                {
+                    Call Write(">Info") at(181.2)(150);
+                }
+                Else
+                {
+                    Call Write("Info") at(185)(150);
+                }
+                If (inventory[ihover] < 15)
+                {
+                    If (inventory[ihover] < 8)
+                    {
+                        If (List.IndexOf(equipped, "Sword") == ihover)
+                        {
+                            Call Write(Operator.Join("Atk:", (weapon/shield power[inventory[List.IndexOf(equipped, "Sword")]] + inventorycount[List.IndexOf(equipped, "Sword")]))) at(185)(140);
+                        }
+                        Else
+                        {
+                            Call Write(Operator.Join("Atk:", Operator.Join((weapon/shield power[inventory[List.IndexOf(equipped, "Sword")]] + inventorycount[List.IndexOf(equipped, "Sword")]), Operator.Join("->", (weapon/shield power[inventory[ihover]] + inventorycount[ihover]))))) at(185)(140);
+                        }
+                    }
+                    Else
+                    {
+                        If (List.IndexOf(equipped, "Shield") == ihover)
+                        {
+                            Call Write(Operator.Join("Def:", (weapon/shield power[inventory[List.IndexOf(equipped, "Shield")]] + inventorycount[List.IndexOf(equipped, "Shield")]))) at(185)(140);
+                        }
+                        Else
+                        {
+                            Call Write(Operator.Join("Def:", Operator.Join((weapon/shield power[inventory[List.IndexOf(equipped, "Shield")]] + inventorycount[List.IndexOf(equipped, "Shield")]), Operator.Join("->", (weapon/shield power[inventory[ihover]] + inventorycount[ihover]))))) at(185)(140);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    If ((List.Length(textlog) > scrollingoffset) And (Not ((curscrl == List.Length(textlog)))))
+    {
+        scrollingoffset += (0.4 + ((scrollingoffset + 3) < List.Length(textlog)));
+    }
+    Call Write(textlog[(scrollingoffset - 3)]) at(-233)((-131 + ((scrollingoffset % 1) * 9)));
+    Call Write(textlog[(scrollingoffset - 2)]) at(-233)((-140 + ((scrollingoffset % 1) * 9)));
+    Call Write(textlog[(scrollingoffset - 1)]) at(-233)((-149 + ((scrollingoffset % 1) * 9)));
+    Call Write(textlog[scrollingoffset]) at(-233)((-158 + ((scrollingoffset % 1) * 9)));
+    Call Write(textlog[(scrollingoffset + 1)]) at(-233)((-167 + ((scrollingoffset % 1) * 9)));
+}
+
+
+//----- Custom blocks -------------------------------------------------------------------------------------------------
+
+Define Explosion (warp=true)
+{
+    Sound.Play(Explosion);
+    Repeat (9)
+    {
+        counter1 += 1;
+        If (monstermaploc[(Playerloc + 1tiler[counter1])] > "")
+        {
+            List.Add(textlog, Operator.Join(Operator.Join("Dealt 100 damage to ", MonsterNames[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])]), "."));
+            List.ReplaceItem(monsterhp, (Playerloc + 1tiler[counter1]), (monsterhp[(Playerloc + 1tiler[counter1])] - 100));
+            If (monsterhp[(Playerloc + 1tiler[counter1])] < 1)
+            {
+                Sound.Play(PunchKill2);
+                List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], " died"), "."));
+                List.Add(textlog, Operator.Join(Operator.Join("Gained ", Operator.Round(Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 11)))), " Exp."));
+                PlayerExp += Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], 11));
+                PlayerScorept1 += 125;
+                List.ReplaceItem(monstermaploc, (Playerloc + 1tiler[counter1]), "");
+                List.ReplaceItem(monsterhp, (Playerloc + 1tiler[counter1]), "");
+                List.ReplaceItem(Monstercondition, (Playerloc + 1tiler[counter1]), "");
+            }
+        }
+    }
+}
+
+Define Fire Projectile (warp=true)
+{
+    If (inventory[ihover] == 29)
+    {
+        Sound.Play(Fire);
+    }
+    Repeat Until ((monstermaploc[projectiletile] > "") Or (Operator.LetterOf(maps[floor], projectiletile) == 4))
+    {
+        projectiletile += PlayerDPointTile;
+    }
+    If (Operator.LetterOf(maps[floor], projectiletile) == 4)
+    {
+        Stop(this script);
+    }
+    Call Projectile Effect;
+}
+
+Define I item(string ?) at(string x)(string y) (warp=false)
+{
+    If ((ihover == ?) And (inventoryopen == 1))
+    {
+        If (equipped[?] > 0)
+        {
+            Call Write(Operator.Join(">]", Operator.Join(items[inventory[?]], inventorycount[?]))) at((x - 4.6))(y);
+        }
+        Else
+        {
+            Call Write(Operator.Join(">", Operator.Join(items[inventory[?]], inventorycount[?]))) at((x - 4.6))(y);
+        }
+    }
+    Else
+    {
+        If (equipped[?] > 0)
+        {
+            Call Write(Operator.Join("]", Operator.Join(items[inventory[?]], inventorycount[?]))) at(x)(y);
+        }
+        Else
+        {
+            Call Write(Operator.Join(items[inventory[?]], inventorycount[?])) at(x)(y);
+        }
+    }
+}
+
+Define Lightning (warp=true)
+{
+    Repeat (49)
+    {
+        counter1 += 1;
+        If (monstermaploc[(Playerloc + reveal[counter1])] > "")
+        {
+            List.Add(textlog, Operator.Join(Operator.Join("Dealt 25 damage to ", MonsterNames[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])]), "."));
+            List.ReplaceItem(monsterhp, (Playerloc + reveal[counter1]), (monsterhp[(Playerloc + reveal[counter1])] - 25));
+            If (monsterhp[(Playerloc + reveal[counter1])] < 1)
+            {
+                Sound.Play(PunchKill2);
+                List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], " died"), "."));
+                List.Add(textlog, Operator.Join(Operator.Join("Gained ", Operator.Round(Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 11)))), " Exp."));
+                PlayerExp += Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[(Playerloc + reveal[counter1])])], 11));
+                List.ReplaceItem(monstermaploc, (Playerloc + reveal[counter1]), "");
+                List.ReplaceItem(monsterhp, (Playerloc + reveal[counter1]), "");
+                List.ReplaceItem(Monstercondition, (Playerloc + reveal[counter1]), "");
+            }
+        }
+    }
+}
+
+Define Paralyze nearby (warp=true)
+{
+    counter1 = 0;
+    Repeat (9)
+    {
+        counter1 += 1;
+        If (monstermaploc[(Playerloc + 1tiler[counter1])] > "")
+        {
+            List.ReplaceItem(Monstercondition, (Playerloc + 1tiler[counter1]), Operator.Join(999, monsterhp[(Playerloc + 1tiler[counter1])]));
+            List.Add(textlog, Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[(Playerloc + 1tiler[counter1])])], " was paralyzed!"));
+        }
+    }
+}
+
+Define Projectile Effect (warp=true)
+{
+    If (inventory[ihover] == 29)
+    {
+        List.Add(textlog, Operator.Join(Operator.Join("Dealt 50 damage to ", MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])]), "."));
+        List.ReplaceItem(monsterhp, projectiletile, (monsterhp[projectiletile] - 50));
+        If (monsterhp[projectiletile] < 1)
+        {
+            Sound.Play(PunchKill2);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " died"), "."));
+            List.Add(textlog, Operator.Join(Operator.Join("Gained ", Operator.Round(Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 11)))), " Exp."));
+            PlayerExp += Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 11));
+            PlayerScorept1 += 125;
+            List.ReplaceItem(monsterhp, projectiletile, "");
+            List.ReplaceItem(Monstercondition, projectiletile, "");
+            List.ReplaceItem(monstermaploc, projectiletile, "");
+        }
+    }
+    If (inventory[ihover] == 34)
+    {
+        List.ReplaceItem(monstermaploc, Playerloc, monstermaploc[projectiletile]);
+        List.ReplaceItem(monsterhp, Playerloc, monsterhp[projectiletile]);
+        List.ReplaceItem(Monstercondition, Playerloc, Monstercondition[projectiletile]);
+        List.ReplaceItem(monstermaploc, projectiletile, "");
+        List.ReplaceItem(monsterhp, projectiletile, "");
+        List.ReplaceItem(Monstercondition, projectiletile, "");
+        Playerloc = projectiletile;
+    }
+    If (inventory[ihover] == 35)
+    {
+        Repeat Until ((Operator.LetterOf(maps[floor], (projectiletile + PlayerDPointTile)) == 4) Or (monstermaploc[(projectiletile + PlayerDPointTile)] > ""))
+        {
+            List.ReplaceItem(monstermaploc, (projectiletile + PlayerDPointTile), monstermaploc[projectiletile]);
+            List.ReplaceItem(monsterhp, (projectiletile + PlayerDPointTile), monsterhp[projectiletile]);
+            List.ReplaceItem(Monstercondition, (projectiletile + PlayerDPointTile), Monstercondition[projectiletile]);
+            List.ReplaceItem(monstermaploc, projectiletile, "");
+            List.ReplaceItem(monsterhp, projectiletile, "");
+            List.ReplaceItem(Monstercondition, projectiletile, "");
+            projectiletile += PlayerDPointTile;
+        }
+        Sound.Play(Punch1);
+        List.Add(textlog, Operator.Join(Operator.Join("Dealt 10 damage to ", MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])]), "."));
+        List.ReplaceItem(monsterhp, projectiletile, (monsterhp[projectiletile] - 10));
+        If (monsterhp[projectiletile] < 1)
+        {
+            Sound.Play(PunchKill2);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " died"), "."));
+            List.Add(textlog, Operator.Join(Operator.Join("Gained ", Operator.Round(Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 11)))), " Exp."));
+            PlayerExp += Operator.Join(Operator.Join(Operator.Join(Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 8), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 9)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 10)), Operator.LetterOf(monster stats[List.IndexOf(al, monstermaploc[projectiletile])], 11));
+            PlayerScorept1 += 125;
+            List.ReplaceItem(monstermaploc, projectiletile, "");
+            List.ReplaceItem(monsterhp, projectiletile, "");
+            List.ReplaceItem(Monstercondition, projectiletile, "");
+        }
+    }
+    If (inventory[ihover] == 33)
+    {
+        If (monsterhp[projectiletile] > 99)
+        {
+            List.Add(textlog, "But it was nullified!");
+        }
+        Else
+        {
+            PlayerHp += Operator.Round((monsterhp[projectiletile] / 2));
+            List.ReplaceItem(monsterhp, projectiletile, Operator.Round((monsterhp[projectiletile] / 2)));
+            Sound.Play(Snort);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], "had its HP drained"), "!"));
+        }
+    }
+    If (inventory[ihover] == 36)
+    {
+        Sound.Play(charge);
+        List.ReplaceItem(Monstercondition, projectiletile, Operator.Join(999, monsterhp[projectiletile]));
+        List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " is paralyzed"), "!"));
+    }
+    If (inventory[ihover] == 37)
+    {
+        List.ReplaceItem(Monstercondition, projectiletile, ((Operator.Random(1 , 2) * 95) + 15));
+        If (Monstercondition[projectiletile] == 110)
+        {
+            Sound.Play(Confusion);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " was dazed"), "!"));
+        }
+        Else
+        {
+            Sound.Play(Snoring);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " fell asleep"), "!"));
+        }
+    }
+    If (inventory[ihover] == 38)
+    {
+        If (monsterhp[projectiletile] > 99)
+        {
+            List.Add(textlog, "But it was nullified!");
+        }
+        Else
+        {
+            Sound.Play(Slow);
+            List.ReplaceItem(Monstercondition, projectiletile, -200);
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " slowed down"), "."));
+        }
+    }
+    If (inventory[ihover] == 39)
+    {
+        Call Warp;
+        List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " warped"), "!"));
+        List.ReplaceItem(monstermaploc, counter1, monstermaploc[projectiletile]);
+        List.ReplaceItem(monsterhp, counter1, monsterhp[projectiletile]);
+        List.ReplaceItem(Monstercondition, counter1, Monstercondition[projectiletile]);
+        List.ReplaceItem(monstermaploc, projectiletile, "");
+        List.ReplaceItem(monsterhp, projectiletile, "");
+        List.ReplaceItem(Monstercondition, projectiletile, "");
+    }
+}
+
+Define Reveal(string number or text) (warp=true)
+{
+    If (Not (List.ContainsItem(revealed tiles, number or text)))
+    {
+        List.Add(revealed tiles, number or text);
+    }
+}
+
+Define RevealMap (warp=true)
+{
+    revealloc = 0;
+    Repeat (2360)
+    {
+        revealloc += 1;
+        If (Not ((Operator.LetterOf(maps[floor], revealloc) == 4)))
+        {
+            Call Reveal(revealloc);
+            Call Reveal((revealloc - 1));
+            Call Reveal((revealloc - 2));
+            Call Reveal((revealloc - 3));
+            Call Reveal((revealloc + 3));
+            Call Reveal((revealloc + 1));
+            Call Reveal((revealloc + 2));
+            Call Reveal((revealloc - 41));
+            Call Reveal((revealloc - 42));
+            Call Reveal((revealloc - 40));
+            Call Reveal((revealloc - 39));
+            Call Reveal((revealloc - 38));
+            Call Reveal((revealloc - 81));
+            Call Reveal((revealloc - 82));
+            Call Reveal((revealloc - 80));
+            Call Reveal((revealloc - 79));
+            Call Reveal((revealloc - 78));
+            Call Reveal((revealloc + 41));
+            Call Reveal((revealloc + 42));
+            Call Reveal((revealloc + 40));
+            Call Reveal((revealloc + 39));
+            Call Reveal((revealloc + 38));
+            Call Reveal((revealloc + 81));
+            Call Reveal((revealloc + 82));
+            Call Reveal((revealloc + 80));
+            Call Reveal((revealloc + 79));
+            Call Reveal((revealloc + 78));
+            Call Reveal((revealloc - 121));
+            Call Reveal((revealloc - 122));
+            Call Reveal((revealloc - 120));
+            Call Reveal((revealloc - 119));
+            Call Reveal((revealloc - 118));
+            Call Reveal((revealloc + 121));
+            Call Reveal((revealloc + 122));
+            Call Reveal((revealloc + 120));
+            Call Reveal((revealloc + 119));
+            Call Reveal((revealloc + 118));
+            Call Reveal((revealloc - 83));
+            Call Reveal((revealloc - 77));
+            Call Reveal((revealloc + 83));
+            Call Reveal((revealloc + 77));
+            Call Reveal((revealloc - 123));
+            Call Reveal((revealloc - 117));
+            Call Reveal((revealloc + 123));
+            Call Reveal((revealloc + 117));
+            Call Reveal((revealloc - 37));
+            Call Reveal((revealloc + 37));
+            Call Reveal((revealloc - 43));
+            Call Reveal((revealloc + 43));
+        }
+    }
+}
+
+Define Scatter(string status) text(string text) (warp=true)
+{
+    counter1 = 0;
+    Repeat (2360)
+    {
+        counter1 += 1;
+        If (monstermaploc[counter1] > "")
+        {
+            List.ReplaceItem(Monstercondition, counter1, status);
+            List.Add(textlog, Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[counter1])], text));
+        }
+    }
+}
+
+Define Warp (warp=true)
+{
+    Sound.Play(Teleport2);
+    counter1 = 0;
+    Repeat Until (((Operator.LetterOf(maps[floor], counter1) == 2) And (Not ((monstermaploc[counter1] > "")))) And (Not ((counter1 == Playerloc))))
+    {
+        counter1 = Operator.Random(1 , 2360);
+    }
+}
+
+Define Write(string number or text) at(string x)(string y) (warp=true)
+{
+    Looks.SwitchCostumeTo(abc);
+    Looks.SetSizeTo(48);
+    Looks.Show();
+    Motion.GoToXY(x, y);
+    If (Motion.YPosition() > 11)
+    {
+        Motion.ChangeXBy(5);
+    }
+    counter1 = 0;
+    Repeat (Variable.Length(number or text))
+    {
+        counter1 += 1;
+        Looks.SwitchCostumeTo(Operator.LetterOf(number or text, counter1));
+        If (Costume.GetNumberName(number) < 13)
+        {
+            Looks.SetEffectTo(BRIGHTNESS, 0);
+            Looks.SwitchCostumeTo(abc);
+            Looks.SetSizeTo(45);
+        }
+        Else
+        {
+            Looks.SetEffectTo(BRIGHTNESS, 100);
+            Looks.SwitchCostumeTo(abc);
+            Looks.SetSizeTo(48);
+        }
+        Looks.SwitchCostumeTo(Operator.LetterOf(number or text, counter1));
+        Pen.Stamp();
+        Motion.ChangeXBy(4.6);
+    }
+    Looks.Hide();
+}
+
+
+//----- Costumes ------------------------------------------------------------------------------------------------------
+
+ .svg
+!.svg
+$.svg
+'.svg
+*.svg
++.svg
+,.svg
+-.svg
+..svg
+0.svg
+1.svg
+2.svg
+3.svg
+4.svg
+5.svg
+6.svg
+7.svg
+8.svg
+9.svg
+:.svg
+>.svg
+?.svg
+A.svg
+a.svg
+abc.svg
+B.svg
+b.svg
+C.svg
+c.svg
+D.svg
+d.svg
+E.svg
+e.svg
+F.svg
+f.svg
+G.svg
+g.svg
+H.svg
+h.svg
+I.svg
+i.svg
+J.svg
+j.svg
+K.svg
+k.svg
+L.svg
+l.svg
+M.svg
+m.svg
+N.svg
+n.svg
+O.svg
+o.svg
+P.svg
+p.svg
+Q.svg
+q.svg
+R.svg
+r.svg
+S.svg
+s.svg
+T.svg
+t.svg
+U.svg
+u.svg
+V.svg
+v.svg
+W.svg
+w.svg
+X.svg
+x.svg
+Y.svg
+y.svg
+Z.svg
+z.svg
+].png
+
+
+//----- Sounds --------------------------------------------------------------------------------------------------------
+
+beep.wav
+cclick.wav
+cclick2.wav
+charge.wav
+Chomp.wav
+Confusion.wav
+Equip.wav
+Explosion.wav
+Fire.wav
+in.wav
+Lightning.wav
+Oops.wav
+out.wav
+Punch1.wav
+PunchKill2.wav
+Read.wav
+Slow.wav
+Snoring.wav
+Snort.wav
+Swish Effect2.wav
+Teleport2.wav
+Unequip.wav
