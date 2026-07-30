@@ -19,7 +19,10 @@ By openning your inventory with I or C, you can use items you picked up. Select 
 ## MAP INTERPRETATION
 Yellow dot - You <BR>
 Red dot - Enemy<BR>
-Blue dot - Item
+Sky blue dot - Item<BR>
+Square - Portal<BR>
+Blue - Room<BR>
+Pink - Hallway
 
 ## TIPS
 Firstly, expect the worst. Don't rely on a direct attack when you are 1 attack from dying.<BR>
