@@ -79,4 +79,4 @@ UFO (31-36F): High defense but low HP
 Killer (33-39F): Highest attack power
 Xplodetank (34-38F): Ranged cannonball
 Dragon (35-40F): Floor-wide fire breath
-*SUDO GOD*(40F): Final boss
+\*SUDO GOD\*(40F): Final boss

@@ -1042,6 +1042,7 @@ $.svg
 ,.svg
 -.svg
 ..svg
+/.svg
 0.svg
 1.svg
 2.svg

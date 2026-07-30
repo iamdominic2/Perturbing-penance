@@ -10,18 +10,12 @@ WhenBroadcastReceived(GF)
     generatingmap = 0;
     Event.BroadcastAndWait("Generate");
     Event.Broadcast("StartGame");
-    List.Add(textlog, "Use the arrow keys to move. Press Z to attack! Arrows + X to dash.");
-    List.Add(textlog, "C or I for inventory, X to exit inventory, A to hide monsters, S for diagonal movement.");
-    List.Add(textlog, "D to change direction without moving, Q to show minimap only. Mouse wheel or P/L to scroll messages.");
-    List.Add(textlog, "M to hide/show minimap. Z + X to heal in place. If you want to view this help message again, press H!");
+    Call Helpmsg;
     Forever
     {
         If Sensing.KeyPressed(h)
         {
-            List.Add(textlog, "Use the arrow keys to move. Press Z to attack! Arrows + X to dash, C or I for inventory");
-            List.Add(textlog, "X to exit inventory, A to hide monsters, S for diagonal movement.");
-            List.Add(textlog, "D to change direction without moving, Q to show minimap only.");
-            List.Add(textlog, "M to hide/show minimap. Z+X to heal in place. If you want to view this again, press H!");
+            Call Helpmsg;
             Wait Until (Not (Sensing.KeyPressed(h)));
         }
     }
@@ -66,6 +60,24 @@ WhenBroadcastReceived(sosis)
 
 
 //----- Custom blocks -------------------------------------------------------------------------------------------------
+
+Define Helpmsg (warp=false)
+{
+    If is compiled?
+    {
+        List.Add(textlog, "Use the arrow keys to move. Press Z to attack! Arrows + X to dash.");
+        List.Add(textlog, "C or I for inventory, X to exit inventory, A to hide monsters, S for diagonal movement.");
+        List.Add(textlog, "D to change direction in place, Q/Shift to show minimap only. Mouse wheel or P/L to scroll messages.");
+        List.Add(textlog, "M to hide/show minimap. Z + X to heal in place. If you want to view this help message again, press H!");
+    }
+    Else
+    {
+        List.Add(textlog, "Use the arrow keys to move. Press Z to attack! Arrows + X to dash.");
+        List.Add(textlog, "C or I for inventory, X to exit inventory, A to hide monsters, S for diagonal movement.");
+        List.Add(textlog, "D to change direction in place, Q to show minimap only. Mouse wheel or P/L to scroll messages.");
+        List.Add(textlog, "M to hide/show minimap. Z + X to heal in place. If you want to view this help message again, press H!");
+    }
+}
 
 Define Write(string number or text) at(string x) (warp=true)
 {

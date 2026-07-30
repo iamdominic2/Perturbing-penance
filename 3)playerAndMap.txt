@@ -2,13 +2,6 @@
 
 WhenBroadcastReceived(GF)
 {
-    PlayerPowerUps = 1;
-    PlayerDPointTile = 1;
-    moved = 0;
-}
-
-WhenBroadcastReceived(GF)
-{
     mapof = 0;
     Forever
     {
@@ -16,6 +9,13 @@ WhenBroadcastReceived(GF)
         mapof = (1 - mapof);
         Wait Until (Not (Sensing.KeyPressed(m)));
     }
+}
+
+WhenBroadcastReceived(GF)
+{
+    PlayerPowerUps = 1;
+    PlayerDPointTile = 1;
+    moved = 0;
 }
 
 WhenBroadcastReceived(PastTurn)
@@ -407,11 +407,11 @@ Define GUI (warp=true)
     {
         Motion.PointInDirection(-135);
     }
-    Motion.Move(((Sensing.KeyPressed(z) And (Not (Sensing.KeyPressed(x)))) * ((1 - inventoryopen) * 7)));
+    Motion.Move(((Sensing.KeyPressed(z) And ((Not (Sensing.KeyPressed(x))) And (Not (Sensing.KeyPressed(d))))) * ((1 - inventoryopen) * 7)));
     Looks.SetEffectTo(GHOST, 44);
     If List.ContainsItem(equipped, "Sword")
     {
-        If Operator.Contains(inventory[List.IndexOf(equipped, "Sword")], "Axe")
+        If Operator.Contains(items[inventory[List.IndexOf(equipped, "Sword")]], "Axe")
         {
             Looks.SwitchCostumeTo(Wall5);
         }
@@ -988,11 +988,11 @@ Define MoveRandom (warp=true)
 
 Define PaintMap (warp=true)
 {
-    If (Not (Sensing.KeyPressed(q)))
+    If (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))
     {
         Call GUI;
     }
-    If ((mapof == 0) Or Sensing.KeyPressed(q))
+    If ((mapof == 0) Or (Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift)))
     {
         Looks.SetEffectTo(GHOST, 77);
         Looks.Show();
@@ -1020,7 +1020,7 @@ Define PaintMap (warp=true)
                     Looks.SwitchCostumeTo( );
                 }
                 Motion.PointInDirection(90);
-                Looks.SetEffectTo(GHOST, (45 * (Not (Sensing.KeyPressed(q)))));
+                Looks.SetEffectTo(GHOST, (45 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
                 Pen.Stamp();
                 Looks.ClearGraphicEffects();
                 defnode = 0;
@@ -1065,7 +1065,7 @@ Define PaintMap (warp=true)
                         {
                             Looks.SwitchCostumeTo(&);
                         }
-                        Looks.SetEffectTo(GHOST, (32 * (Not (Sensing.KeyPressed(q)))));
+                        Looks.SetEffectTo(GHOST, (32 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
                         Pen.Stamp();
                     }
                     Looks.SwitchCostumeTo(@);
@@ -1115,7 +1115,7 @@ Define PaintMap (warp=true)
                     {
                         Motion.PointInDirection(90);
                     }
-                    Looks.SetEffectTo(GHOST, (52 * (Not (Sensing.KeyPressed(q)))));
+                    Looks.SetEffectTo(GHOST, (52 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
                     Pen.Stamp();
                 }
             }
