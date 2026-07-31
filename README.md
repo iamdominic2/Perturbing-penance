@@ -43,7 +43,7 @@ D+arrow to turn without moving<BR>
 S to force diagonal movement<BR>
 M to show/hide minimap<BR>
 Q to focus minimap<BR>
-R to retry upon death (or after you beat it, if you want to grow as a player even more)
+R to retry upon death
 
 ## STATUS CONDITIONS
 Confusion- Movement or attack goes in a random direction. Items are unaffected.<BR>
