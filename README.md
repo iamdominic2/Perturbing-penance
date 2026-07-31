@@ -1,6 +1,6 @@
 # Perturbing Penance
 
-**LINK:https://iamdominic2.github.io/Perturbing-penance/**
+**LINK: https://iamdominic2.github.io/Perturbing-penance/**
 
 This is a traditional roguelike game.<BR>
 1. Tile-based movement and turn-based combat.<BR>
