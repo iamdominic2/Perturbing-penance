@@ -407,7 +407,7 @@ Define GUI (warp=true)
     {
         Motion.PointInDirection(-135);
     }
-    Motion.Move(((Sensing.KeyPressed(z) And ((Not (Sensing.KeyPressed(x))) And (Not (Sensing.KeyPressed(d))))) * ((1 - inventoryopen) * 7)));
+    Motion.Move(((Sensing.KeyPressed(z) And ((Not (Sensing.KeyPressed(x))) And (Not (Sensing.KeyPressed(d))))) * ((1 - (inventoryopen == 1)) * 7)));
     Looks.SetEffectTo(GHOST, 44);
     If List.ContainsItem(equipped, "Sword")
     {
@@ -515,6 +515,10 @@ Define ItemCheck(string n) (warp=true)
                     If ((flooritemmount[counter2] > 0) And (Not (((mapitems[counter2] < 15) Or ((mapitems[counter2] > 32) And (mapitems[counter2] < 40))))))
                     {
                         List.ReplaceItem(flooritemmount, counter2, "");
+                    }
+                    If ((Not ((flooritemmount[counter2] > 0))) And ((mapitems[counter2] > 32) And (mapitems[counter2] < 40)))
+                    {
+                        List.ReplaceItem(flooritemmount, counter2, 2);
                     }
                     If (((List.Length(inventory) == 20) And (mapitems[counter2] < 51)) Or Sensing.KeyPressed(x))
                     {

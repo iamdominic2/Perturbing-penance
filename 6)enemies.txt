@@ -295,7 +295,7 @@ Define Attack or move (warp=false)
                 If (inventory[List.IndexOf(equipped, "Shield")] == 10)
                 {
                     List.Add(textlog, "The Binary Shield reduced the damage!");
-                    dmg = (dmg * 0.6);
+                    dmg = ceiling((dmg * 0.6));
                 }
             }
             List.Add(attacksoundeffects, 1);
