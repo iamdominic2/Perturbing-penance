@@ -77,11 +77,11 @@ WhenBroadcastReceived(GF)
                             List.Add(textlog, Operator.Join(Operator.Join("Dropped ", Operator.Join(items[inventory[ihover]], inventorycount[ihover])), "."));
                             If (inventorycount[List.Length(inventorycount)] > 0)
                             {
-                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[mapitems[Playerloc]], Operator.Join("+", flooritemmount[Playerloc]))), ""));
+                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[mapitems[Playerloc]], Operator.Join("+", flooritemmount[Playerloc]))), "."));
                             }
                             Else
                             {
-                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", items[mapitems[Playerloc]]), ""));
+                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", items[mapitems[Playerloc]]), "."));
                             }
                             List.ReplaceItem(mapitems, Playerloc, inventory[ihover]);
                             List.ReplaceItem(flooritemmount, Playerloc, Operator.Round(inventorycount[ihover]));
@@ -854,7 +854,7 @@ Define Projectile Effect (warp=true)
             PlayerHp += Operator.Round((monsterhp[projectiletile] / 2));
             List.ReplaceItem(monsterhp, projectiletile, Operator.Round((monsterhp[projectiletile] / 2)));
             Sound.Play(Snort);
-            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], "had its HP drained"), "!"));
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " had its HP drained"), "!"));
         }
     }
     If (inventory[ihover] == 36)
