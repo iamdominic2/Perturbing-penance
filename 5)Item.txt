@@ -530,26 +530,36 @@ WhenBroadcastReceived(GF)
 {
     Forever
     {
-        If (Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))
+        If List.ContainsItem(textlog, "Congratulations! You have defeated the all-mighty bringer of evil *S U D O  G O D*!")
         {
-            inventoryopen = (1 - inventoryopen);
+            inventoryopen = 0;
             selectioninv = 0;
             ihover = 1;
             selectioninv2 = 1;
-            Sound.Play((21 + inventoryopen));
-            Wait Until (Not ((Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))));
         }
-        If ((Sensing.KeyPressed(x) Or Sensing.KeyPressed(x)) And (inventoryopen == 1))
+        Else
         {
-            If (selectioninv == 0)
+            If (Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))
             {
                 inventoryopen = (1 - inventoryopen);
                 selectioninv = 0;
                 ihover = 1;
                 selectioninv2 = 1;
                 Sound.Play((21 + inventoryopen));
+                Wait Until (Not ((Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))));
             }
-            Wait Until (Not (Sensing.KeyPressed(x)));
+            If ((Sensing.KeyPressed(x) Or Sensing.KeyPressed(x)) And (inventoryopen == 1))
+            {
+                If (selectioninv == 0)
+                {
+                    inventoryopen = (1 - inventoryopen);
+                    selectioninv = 0;
+                    ihover = 1;
+                    selectioninv2 = 1;
+                    Sound.Play((21 + inventoryopen));
+                }
+                Wait Until (Not (Sensing.KeyPressed(x)));
+            }
         }
     }
 }

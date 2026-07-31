@@ -16555,7 +16555,7 @@ WhenGreenFlagClicked()
     {
         If Sensing.KeyPressed(r)
         {
-            If (List.ContainsItem(textlog, "Congratulations! You have defeated the all-mighty bringer of evil *S U D O  G O D*!") Or (PlayerHp == 0))
+            If ( Or (PlayerHp == 0))
             {
                 Stop(other scripts in sprite);
                 Event.BroadcastAndWait("sosis");

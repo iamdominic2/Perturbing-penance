@@ -108,7 +108,7 @@ WhenBroadcastReceived(StartGame)
         {
             Control.Wait(1);
             List.Add(textlog, "Congratulations! You have defeated the all-mighty bringer of evil *S U D O  G O D*!");
-            List.Add(textlog, Operator.Join("Press R if you want to play yet again! Score: ", ((PlayerScorept1 + PlayerExp) + ((PlayerLevel * 1000) + 1493800))));
+            List.Add(textlog, Operator.Join("And with a score of ", Operator.Join(((PlayerScorept1 + PlayerExp) + ((PlayerLevel * 1000) + 1493800)), " to go off with a bang too! Congrats!")));
             Event.Broadcast("Ending");
             Forever
             {
@@ -992,139 +992,279 @@ Define MoveRandom (warp=true)
 
 Define PaintMap (warp=true)
 {
-    If (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))
+    If is compiled?
     {
-        Call GUI;
-    }
-    If ((mapof == 0) Or (Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift)))
-    {
-        Looks.SetEffectTo(GHOST, 77);
-        Looks.Show();
-        Motion.GoToXY(-238, 178);
-        monsternearby = 0;
-        counter2 = 0;
-        Repeat (59)
+        If (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))
         {
-            Looks.SwitchCostumeTo(%);
-            Looks.SetSizeTo(55);
-            Motion.SetY(178);
-            Motion.ChangeXBy(8);
-            Motion.PointInDirection(90);
-            Repeat (40)
+            Call GUI;
+        }
+        If ((mapof == 0) Or (Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift)))
+        {
+            Looks.SetEffectTo(GHOST, 77);
+            Looks.Show();
+            Motion.GoToXY(-238, 178);
+            monsternearby = 0;
+            counter2 = 0;
+            Repeat (59)
             {
-                Motion.ChangeYBy(-8);
-                counter2 += 1;
-                Looks.ClearGraphicEffects();
-                If ((PlayerDPointTile + Playerloc) == counter2)
-                {
-                }
-                Looks.SwitchCostumeTo((Operator.LetterOf(maps[floor], counter2) + 10));
-                If (Not (List.ContainsItem(revealed tiles, counter2)))
-                {
-                    Looks.SwitchCostumeTo( );
-                }
+                Looks.SwitchCostumeTo(%);
+                Looks.SetSizeTo(55);
+                Motion.SetY(178);
+                Motion.ChangeXBy(8);
                 Motion.PointInDirection(90);
-                Looks.SetEffectTo(GHOST, (45 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
-                Pen.Stamp();
-                Looks.ClearGraphicEffects();
-                defnode = 0;
-                If (mapitems[counter2] > 0)
+                Repeat (40)
                 {
-                    Looks.SwitchCostumeTo(w);
-                    defnode = 1;
-                }
-                If ((monstermaploc[counter2] > "") And List.ContainsItem(reveal, (counter2 - Playerloc)))
-                {
-                    Looks.SwitchCostumeTo(B);
-                    defnode = 1;
-                    monsternearby = 1;
-                }
-                If ((monstermaploc[counter2] > "") And (floorlight == 1))
-                {
-                    Looks.SwitchCostumeTo(B);
-                    defnode = 1;
-                }
-                If (Not (List.ContainsItem(revealed tiles, counter2)))
-                {
-                    Looks.SwitchCostumeTo( );
-                }
-                If ((monstermaploc[counter2] > "") And (inventory[List.IndexOf(equipped, "Armband")] == 21))
-                {
-                    defnode = 1;
-                    Looks.SwitchCostumeTo(B);
-                }
-                If (((mapitems[counter2] > 0) And (inventory[List.IndexOf(equipped, "Armband")] == 24)) And (Not ((List.ContainsItem(reveal, (counter2 - Playerloc)) And (monstermaploc[counter2] > "")))))
-                {
-                    Looks.SwitchCostumeTo(w);
-                    defnode = 1;
-                }
-                If (counter2 == Playerloc)
-                {
-                    defnode = 1;
-                    If Sensing.KeyPressed(s)
+                    Motion.ChangeYBy(-8);
+                    counter2 += 1;
+                    Looks.ClearGraphicEffects();
+                    If ((PlayerDPointTile + Playerloc) == counter2)
                     {
-                        Motion.PointInDirection(90);
-                        Looks.SwitchCostumeTo($);
-                        If ((Sensing.Timer() % 1) < 0.4)
+                    }
+                    Looks.SwitchCostumeTo((Operator.LetterOf(maps[floor], counter2) + 10));
+                    If (Not (List.ContainsItem(revealed tiles, counter2)))
+                    {
+                        Looks.SwitchCostumeTo( );
+                    }
+                    Motion.PointInDirection(90);
+                    Looks.SetEffectTo(GHOST, (45 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
+                    Pen.Stamp();
+                    Looks.ClearGraphicEffects();
+                    defnode = 0;
+                    If (mapitems[counter2] > 0)
+                    {
+                        Looks.SwitchCostumeTo(w);
+                        defnode = 1;
+                    }
+                    If ((monstermaploc[counter2] > "") And List.ContainsItem(reveal, (counter2 - Playerloc)))
+                    {
+                        Looks.SwitchCostumeTo(B);
+                        defnode = 1;
+                        monsternearby = 1;
+                    }
+                    If ((monstermaploc[counter2] > "") And (floorlight == 1))
+                    {
+                        Looks.SwitchCostumeTo(B);
+                        defnode = 1;
+                    }
+                    If (Not (List.ContainsItem(revealed tiles, counter2)))
+                    {
+                        Looks.SwitchCostumeTo( );
+                    }
+                    If ((monstermaploc[counter2] > "") And (inventory[List.IndexOf(equipped, "Armband")] == 21))
+                    {
+                        defnode = 1;
+                        Looks.SwitchCostumeTo(B);
+                    }
+                    If (((mapitems[counter2] > 0) And (inventory[List.IndexOf(equipped, "Armband")] == 24)) And (Not ((List.ContainsItem(reveal, (counter2 - Playerloc)) And (monstermaploc[counter2] > "")))))
+                    {
+                        Looks.SwitchCostumeTo(w);
+                        defnode = 1;
+                    }
+                    If (counter2 == Playerloc)
+                    {
+                        defnode = 1;
+                        If Sensing.KeyPressed(s)
                         {
-                            Looks.SwitchCostumeTo(&);
+                            Motion.PointInDirection(90);
+                            Looks.SwitchCostumeTo($);
+                            If ((Sensing.Timer() % 1) < 0.4)
+                            {
+                                Looks.SwitchCostumeTo(&);
+                            }
+                            Looks.SetEffectTo(GHOST, (32 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
+                            Pen.Stamp();
                         }
-                        Looks.SetEffectTo(GHOST, (32 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
+                        Looks.SwitchCostumeTo(@);
+                        If Sensing.KeyPressed(d)
+                        {
+                            Looks.ChangeEffectBy(BRIGHTNESS, 33);
+                        }
+                        If (PlayerDPointTile == -41)
+                        {
+                            Motion.PointInDirection(-45);
+                        }
+                        If (PlayerDPointTile == -1)
+                        {
+                            Motion.PointInDirection(0);
+                        }
+                        If (PlayerDPointTile == 39)
+                        {
+                            Motion.PointInDirection(45);
+                        }
+                        If (PlayerDPointTile == 40)
+                        {
+                            Motion.PointInDirection(90);
+                        }
+                        If (PlayerDPointTile == -40)
+                        {
+                            Motion.PointInDirection(-90);
+                        }
+                        If (PlayerDPointTile == 41)
+                        {
+                            Motion.PointInDirection(135);
+                        }
+                        If (PlayerDPointTile == 1)
+                        {
+                            Motion.PointInDirection(180);
+                        }
+                        If (PlayerDPointTile == -39)
+                        {
+                            Motion.PointInDirection(-135);
+                        }
+                    }
+                    If ((Costume.GetNumberName(number) == 12) Or (Costume.GetNumberName(number) == 13))
+                    {
+                    }
+                    If (((Motion.YPosition() < 137) And (Motion.YPosition() > -137)) And (defnode == 1))
+                    {
+                        If (Not ((Costume.GetNumberName(name) == "@")))
+                        {
+                            Motion.PointInDirection(90);
+                        }
+                        Looks.SetEffectTo(GHOST, (52 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
                         Pen.Stamp();
                     }
-                    Looks.SwitchCostumeTo(@);
-                    If Sensing.KeyPressed(d)
-                    {
-                        Looks.ChangeEffectBy(BRIGHTNESS, 33);
-                    }
-                    If (PlayerDPointTile == -41)
-                    {
-                        Motion.PointInDirection(-45);
-                    }
-                    If (PlayerDPointTile == -1)
-                    {
-                        Motion.PointInDirection(0);
-                    }
-                    If (PlayerDPointTile == 39)
-                    {
-                        Motion.PointInDirection(45);
-                    }
-                    If (PlayerDPointTile == 40)
-                    {
-                        Motion.PointInDirection(90);
-                    }
-                    If (PlayerDPointTile == -40)
-                    {
-                        Motion.PointInDirection(-90);
-                    }
-                    If (PlayerDPointTile == 41)
-                    {
-                        Motion.PointInDirection(135);
-                    }
-                    If (PlayerDPointTile == 1)
-                    {
-                        Motion.PointInDirection(180);
-                    }
-                    If (PlayerDPointTile == -39)
-                    {
-                        Motion.PointInDirection(-135);
-                    }
-                }
-                If ((Costume.GetNumberName(number) == 12) Or (Costume.GetNumberName(number) == 13))
-                {
-                }
-                If (((Motion.YPosition() < 137) And (Motion.YPosition() > -137)) And (defnode == 1))
-                {
-                    If (Not ((Costume.GetNumberName(name) == "@")))
-                    {
-                        Motion.PointInDirection(90);
-                    }
-                    Looks.SetEffectTo(GHOST, (52 * (Not ((Sensing.KeyPressed(q) Or Sensing.KeyPressed(shift))))));
-                    Pen.Stamp();
                 }
             }
+            Looks.Hide();
         }
-        Looks.Hide();
+    }
+    Else
+    {
+        If (Not ((Sensing.KeyPressed(q) Or )))
+        {
+            Call GUI;
+        }
+        If ((mapof == 0) Or (Sensing.KeyPressed(q) Or ))
+        {
+            Looks.SetEffectTo(GHOST, 77);
+            Looks.Show();
+            Motion.GoToXY(-238, 178);
+            monsternearby = 0;
+            counter2 = 0;
+            Repeat (59)
+            {
+                Looks.SwitchCostumeTo(%);
+                Looks.SetSizeTo(55);
+                Motion.SetY(178);
+                Motion.ChangeXBy(8);
+                Motion.PointInDirection(90);
+                Repeat (40)
+                {
+                    Motion.ChangeYBy(-8);
+                    counter2 += 1;
+                    Looks.ClearGraphicEffects();
+                    If ((PlayerDPointTile + Playerloc) == counter2)
+                    {
+                    }
+                    Looks.SwitchCostumeTo((Operator.LetterOf(maps[floor], counter2) + 10));
+                    If (Not (List.ContainsItem(revealed tiles, counter2)))
+                    {
+                        Looks.SwitchCostumeTo( );
+                    }
+                    Motion.PointInDirection(90);
+                    Looks.SetEffectTo(GHOST, (45 * (Not ((Sensing.KeyPressed(q) Or )))));
+                    Pen.Stamp();
+                    Looks.ClearGraphicEffects();
+                    defnode = 0;
+                    If (mapitems[counter2] > 0)
+                    {
+                        Looks.SwitchCostumeTo(w);
+                        defnode = 1;
+                    }
+                    If ((monstermaploc[counter2] > "") And List.ContainsItem(reveal, (counter2 - Playerloc)))
+                    {
+                        Looks.SwitchCostumeTo(B);
+                        defnode = 1;
+                        monsternearby = 1;
+                    }
+                    If ((monstermaploc[counter2] > "") And (floorlight == 1))
+                    {
+                        Looks.SwitchCostumeTo(B);
+                        defnode = 1;
+                    }
+                    If (Not (List.ContainsItem(revealed tiles, counter2)))
+                    {
+                        Looks.SwitchCostumeTo( );
+                    }
+                    If ((monstermaploc[counter2] > "") And (inventory[List.IndexOf(equipped, "Armband")] == 21))
+                    {
+                        defnode = 1;
+                        Looks.SwitchCostumeTo(B);
+                    }
+                    If (((mapitems[counter2] > 0) And (inventory[List.IndexOf(equipped, "Armband")] == 24)) And (Not ((List.ContainsItem(reveal, (counter2 - Playerloc)) And (monstermaploc[counter2] > "")))))
+                    {
+                        Looks.SwitchCostumeTo(w);
+                        defnode = 1;
+                    }
+                    If (counter2 == Playerloc)
+                    {
+                        defnode = 1;
+                        If Sensing.KeyPressed(s)
+                        {
+                            Motion.PointInDirection(90);
+                            Looks.SwitchCostumeTo($);
+                            If ((Sensing.Timer() % 1) < 0.4)
+                            {
+                                Looks.SwitchCostumeTo(&);
+                            }
+                            Looks.SetEffectTo(GHOST, (32 * (Not ((Sensing.KeyPressed(q) Or )))));
+                            Pen.Stamp();
+                        }
+                        Looks.SwitchCostumeTo(@);
+                        If Sensing.KeyPressed(d)
+                        {
+                            Looks.ChangeEffectBy(BRIGHTNESS, 33);
+                        }
+                        If (PlayerDPointTile == -41)
+                        {
+                            Motion.PointInDirection(-45);
+                        }
+                        If (PlayerDPointTile == -1)
+                        {
+                            Motion.PointInDirection(0);
+                        }
+                        If (PlayerDPointTile == 39)
+                        {
+                            Motion.PointInDirection(45);
+                        }
+                        If (PlayerDPointTile == 40)
+                        {
+                            Motion.PointInDirection(90);
+                        }
+                        If (PlayerDPointTile == -40)
+                        {
+                            Motion.PointInDirection(-90);
+                        }
+                        If (PlayerDPointTile == 41)
+                        {
+                            Motion.PointInDirection(135);
+                        }
+                        If (PlayerDPointTile == 1)
+                        {
+                            Motion.PointInDirection(180);
+                        }
+                        If (PlayerDPointTile == -39)
+                        {
+                            Motion.PointInDirection(-135);
+                        }
+                    }
+                    If ((Costume.GetNumberName(number) == 12) Or (Costume.GetNumberName(number) == 13))
+                    {
+                    }
+                    If (((Motion.YPosition() < 137) And (Motion.YPosition() > -137)) And (defnode == 1))
+                    {
+                        If (Not ((Costume.GetNumberName(name) == "@")))
+                        {
+                            Motion.PointInDirection(90);
+                        }
+                        Looks.SetEffectTo(GHOST, (52 * (Not ((Sensing.KeyPressed(q) Or )))));
+                        Pen.Stamp();
+                    }
+                }
+            }
+            Looks.Hide();
+        }
     }
 }
 
@@ -1415,7 +1555,7 @@ Wall4.png
 Wall5.png
 Weapon.png
 X.svg
-xpaxe.svg
+xpaxe.png
 Y.svg
 Z.svg
 
