@@ -474,41 +474,53 @@ WhenBroadcastReceived(GF)
                 If (Sensing.KeyPressed(down arrow) And List.ContainsItem(downhover, ihover))
                 {
                     ihover += 1;
-                    If (List.Length(items) < ihover)
+                    If (List.Length(inventory) < ihover)
                     {
                         ihover += -1;
                     }
-                    Sound.Play(beep);
+                    Else
+                    {
+                        Sound.Play(beep);
+                    }
                     Wait Until (Not (Sensing.KeyPressed(down arrow)));
                 }
                 If (Sensing.KeyPressed(up arrow) And List.ContainsItem(uphover, ihover))
                 {
                     ihover += -1;
-                    If (List.Length(items) < ihover)
+                    If (List.Length(inventory) < ihover)
                     {
                         ihover += 1;
                     }
-                    Sound.Play(beep);
+                    Else
+                    {
+                        Sound.Play(beep);
+                    }
                     Wait Until (Not (Sensing.KeyPressed(up arrow)));
                 }
                 If (Sensing.KeyPressed(right arrow) And (ihover < 17))
                 {
                     ihover += 4;
-                    If (List.Length(items) < ihover)
+                    If (List.Length(inventory) < ihover)
                     {
                         ihover += -4;
                     }
-                    Sound.Play(beep);
+                    Else
+                    {
+                        Sound.Play(beep);
+                    }
                     Wait Until (Not (Sensing.KeyPressed(right arrow)));
                 }
                 If (Sensing.KeyPressed(left arrow) And (ihover > 4))
                 {
                     ihover += -4;
-                    If (List.Length(items) < ihover)
+                    If (List.Length(inventory) < ihover)
                     {
                         ihover += 4;
                     }
-                    Sound.Play(beep);
+                    Else
+                    {
+                        Sound.Play(beep);
+                    }
                     Wait Until (Not (Sensing.KeyPressed(left arrow)));
                 }
             }
