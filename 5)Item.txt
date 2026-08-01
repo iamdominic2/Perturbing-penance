@@ -74,15 +74,15 @@ WhenBroadcastReceived(GF)
                                 List.Add(inventorycount, Operator.Join("+", flooritemmount[Playerloc]));
                             }
                             List.Add(equipped, 0);
-                            List.Add(textlog, Operator.Join(Operator.Join("Dropped ", Operator.Join(items[inventory[ihover]], inventorycount[ihover])), "."));
                             If (inventorycount[List.Length(inventorycount)] > 0)
                             {
-                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[mapitems[Playerloc]], Operator.Join("+", flooritemmount[Playerloc]))), "."));
+                                List.Add(textlog, Operator.Join(Operator.Join("Dropped ", Operator.Join(items[mapitems[Playerloc]], Operator.Join("+", flooritemmount[Playerloc]))), ""));
                             }
                             Else
                             {
-                                List.Add(textlog, Operator.Join(Operator.Join("Picked up ", items[mapitems[Playerloc]]), "."));
+                                List.Add(textlog, Operator.Join(Operator.Join("Dropped ", items[mapitems[Playerloc]]), ""));
                             }
+                            List.Add(textlog, Operator.Join(Operator.Join("Picked up ", Operator.Join(items[inventory[ihover]], inventorycount[ihover])), "."));
                             List.ReplaceItem(mapitems, Playerloc, inventory[ihover]);
                             List.ReplaceItem(flooritemmount, Playerloc, Operator.Round(inventorycount[ihover]));
                             List.DeleteItem(inventory, ihover);
@@ -530,36 +530,26 @@ WhenBroadcastReceived(GF)
 {
     Forever
     {
-        If List.ContainsItem(textlog, "Congratulations! You have defeated the all-mighty bringer of evil *S U D O  G O D*!")
+        If (Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))
         {
-            inventoryopen = 0;
+            inventoryopen = (1 - inventoryopen);
             selectioninv = 0;
             ihover = 1;
             selectioninv2 = 1;
+            Sound.Play((21 + inventoryopen));
+            Wait Until (Not ((Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))));
         }
-        Else
+        If ((Sensing.KeyPressed(x) Or Sensing.KeyPressed(x)) And (inventoryopen == 1))
         {
-            If (Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))
+            If (selectioninv == 0)
             {
                 inventoryopen = (1 - inventoryopen);
                 selectioninv = 0;
                 ihover = 1;
                 selectioninv2 = 1;
                 Sound.Play((21 + inventoryopen));
-                Wait Until (Not ((Sensing.KeyPressed(i) Or Sensing.KeyPressed(c))));
             }
-            If ((Sensing.KeyPressed(x) Or Sensing.KeyPressed(x)) And (inventoryopen == 1))
-            {
-                If (selectioninv == 0)
-                {
-                    inventoryopen = (1 - inventoryopen);
-                    selectioninv = 0;
-                    ihover = 1;
-                    selectioninv2 = 1;
-                    Sound.Play((21 + inventoryopen));
-                }
-                Wait Until (Not (Sensing.KeyPressed(x)));
-            }
+            Wait Until (Not (Sensing.KeyPressed(x)));
         }
     }
 }
@@ -864,7 +854,7 @@ Define Projectile Effect (warp=true)
             PlayerHp += Operator.Round((monsterhp[projectiletile] / 2));
             List.ReplaceItem(monsterhp, projectiletile, Operator.Round((monsterhp[projectiletile] / 2)));
             Sound.Play(Snort);
-            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], " had its HP drained"), "!"));
+            List.Add(textlog, Operator.Join(Operator.Join(MonsterNames[List.IndexOf(al, monstermaploc[projectiletile])], "had its HP drained"), "!"));
         }
     }
     If (inventory[ihover] == 36)
