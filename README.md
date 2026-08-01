@@ -35,7 +35,7 @@ And don't be in a rush- this isn't an action game!
 
 ## CONTROLS
 Arrow keys to move (You can move diagonally, and through corners)<BR>
-Z to attack (face an enemy with D before attacking! you can attack through corners)<BR>
+Z to attack (face an enemy with D before attacking! you can attack through corners) or to select an item in the Inventory. <BR>
 X+Z to step in place (hp still regenerates)<BR>
 I or C to open/close inventory<BR>
 X to exit out of inventory selection menu (when you select an item) or move without picking up items<BR>
@@ -43,7 +43,7 @@ D+arrow to turn without moving<BR>
 S to force diagonal movement<BR>
 M to show/hide minimap<BR>
 Q to focus minimap<BR>
-R to retry upon death
+A to hide monsters<Br>
 
 ## STATUS CONDITIONS
 Confusion- Movement or attack goes in a random direction. Items are unaffected.<BR>
