@@ -1,0 +1,104 @@
+//----- Broadcast received events -------------------------------------------------------------------------------------
+
+WhenBroadcastReceived(clearclones)
+{
+    Control.DeleteThisClone();
+}
+
+WhenBroadcastReceived(GF)
+{
+    generatingmap = 0;
+    Event.BroadcastAndWait("Generate");
+    Event.Broadcast("StartGame");
+}
+
+WhenBroadcastReceived(Paint Bottom)
+{
+    Costume.GoToFrontBack(front);
+    Looks.SetEffectTo(BRIGHTNESS, 100);
+    Call Write(Operator.Join(floor, "F")) at(-230);
+    Call Write(Operator.Join("^ ", PlayerLevel)) at(-195);
+    If (PlayerHp > PlayerMaxHp)
+    {
+        PlayerHp = PlayerMaxHp;
+    }
+    If (PlayerHp < 0)
+    {
+        PlayerHp = 0;
+    }
+    Call Write(Operator.Join("HP ", Operator.Join(Operator.Join(PlayerHp, "/"), PlayerMaxHp))) at(-156);
+    Call Write(Operator.Join("&", PlayerExp)) at(-75);
+    Call Write(Operator.Join("#  ", Operator.Join(Operator.Join(PlayerFull, "/"), PlayerMaxFull))) at(170);
+    Call Write(Operator.Join(""   ", (PlayerPower + ((inventory[List.IndexOf(equipped, "Armband")] == 18) * 3)))) at(90);
+    Call Write(Operator.Join("'  ", ((exp table[PlayerLevel] - PlayerExp) + 0))) at(10);
+    If (PlayerHp > 0)
+    {
+        Pen.SetPenColorToColor(#ff0000);
+        Pen.SetPenSizeTo(8);
+        Pen.SetPenTo(color, ((PlayerHp / PlayerMaxHp) * 32));
+        Motion.GoToXY(-160, -179);
+        Pen.Down();
+        Motion.ChangeXBy(((PlayerHp / PlayerMaxHp) * 63));
+        Pen.Clear();
+    }
+}
+
+WhenBroadcastReceived(sosis)
+{
+    Stop(other scripts in sprite);
+    Control.DeleteThisClone();
+}
+
+
+//----- Custom blocks -------------------------------------------------------------------------------------------------
+
+Define Write(string number or text) at(string x) (warp=true)
+{
+    Looks.SetSizeTo(40);
+    Looks.Show();
+    Motion.GoToXY(x, -173);
+    counter1 = 0;
+    Repeat (Variable.Length(number or text))
+    {
+        counter1 += 1;
+        Looks.SwitchCostumeTo(Operator.LetterOf(number or text, counter1));
+        Control.CreateCloneOf(_myself_);
+        Motion.ChangeXBy((8 / ((Costume.GetNumberName(number) == 20) + 1.3)));
+    }
+    Looks.Hide();
+}
+
+
+//----- Costumes ------------------------------------------------------------------------------------------------------
+
+ .svg
+".svg
+#.svg
+$.svg
+&.svg
+'.svg
+-.svg
+/.svg
+0.svg
+1.svg
+2.svg
+3.svg
+4.svg
+5.svg
+6.svg
+7.svg
+8.svg
+9.svg
+A.svg
+F.svg
+G.svg
+H.svg
+M.svg
+P.svg
+X.svg
+^.svg
+
+
+//----- Sounds --------------------------------------------------------------------------------------------------------
+
+pop.wav

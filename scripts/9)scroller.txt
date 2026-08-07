@@ -1,0 +1,65 @@
+//----- Key pressed events --------------------------------------------------------------------------------------------
+
+WhenKeyPressed(up arrow)
+{
+    If (Not (Sensing.KeyPressed(up arrow)))
+    {
+        scrollingoffset += -1;
+        If (scrollingoffset < 1)
+        {
+            scrollingoffset = 1;
+        }
+        curscrl = List.Length(textlog);
+    }
+}
+
+WhenKeyPressed(down arrow)
+{
+    If (Not (Sensing.KeyPressed(down arrow)))
+    {
+        scrollingoffset += 1;
+        If (scrollingoffset > List.Length(textlog))
+        {
+            scrollingoffset = List.Length(textlog);
+        }
+        curscrl = List.Length(textlog);
+    }
+}
+
+WhenKeyPressed(p)
+{
+    scrollingoffset += -1;
+    If (scrollingoffset < 1)
+    {
+        scrollingoffset = 1;
+    }
+    curscrl = List.Length(textlog);
+}
+
+WhenKeyPressed(l)
+{
+    scrollingoffset += 1;
+    If (scrollingoffset > List.Length(textlog))
+    {
+        scrollingoffset = List.Length(textlog);
+    }
+    curscrl = List.Length(textlog);
+}
+
+
+//----- Broadcast received events -------------------------------------------------------------------------------------
+
+WhenBroadcastReceived(GF)
+{
+    curscrl = 0;
+}
+
+
+//----- Costumes ------------------------------------------------------------------------------------------------------
+
+costume1.svg
+
+
+//----- Sounds --------------------------------------------------------------------------------------------------------
+
+pop.wav

@@ -42,7 +42,7 @@ X to exit out of inventory selection menu (when you select an item) or move with
 D+arrow to turn without moving<BR>
 S to force diagonal movement<BR>
 M to show/hide minimap<BR>
-Q to focus minimap<BR>
+Q or Shift to focus minimap<BR>
 A to hide monsters<Br>
 
 ## STATUS CONDITIONS
@@ -55,6 +55,9 @@ Buffed - do 50% more damage. Stacks.<BR>
 ## Notes
 
 *THIS IS A NEWER VERSION (with beautiful graphics) of one of my slightly older projects, Procedural Penance. That project is here: https://github.com/iamdominic2/Procedural-Penance-ASCII-type-Roguelike*
+
+## UPDATES
+Fixed inventory issues, and nerfed enemy attack powers to be more assessible to beginners
 
 *(By the way, over the passage of time, the term "roguelike" has started to lose its original meaning of procedural dungeon crawling, for a more general term for "games that annoy you", but this game is more similar to Rogue itself, luckily without item identification.)*<BR>
 ## Monsters:
