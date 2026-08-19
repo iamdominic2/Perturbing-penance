@@ -1,7 +1,7 @@
 # Perturbing Penance
 
 **LINK: https://iamdominic2.github.io/Perturbing-penance/**
-
+<img width="1265" height="957" alt="image (45)" src="https://github.com/user-attachments/assets/f69338ea-7160-46bb-ae71-ec247f39bc5c" />
 This is a traditional roguelike game.<BR>
 1. Tile-based movement and turn-based combat.<BR>
 2. You'll have to restart the game if you die.<BR>
@@ -19,6 +19,7 @@ HP regenerates by 1.33% of your maximum HP each turn.
 By openning your inventory with I or C, you can use items you picked up. Select an item with Z to use it, put it on the ground, or view information about the item. 
 
 ## MAP INTERPRETATION
+
 Yellow dot - You <BR>
 Red dot - Enemy<BR>
 Sky blue dot - Item<BR>
