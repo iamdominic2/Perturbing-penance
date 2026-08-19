@@ -67,30 +67,5 @@ Fixed inventory issues and nerfed enemy attack powers to be more accessible to b
 ## What even is a roguelike?
 Over the passage of time, the term "roguelike" has started to lose its original meaning of procedural dungeon crawling, becoming a more general term for "games that annoy you", but this game is more similar to Rogue itself, luckily without item identification.
 
-## Monsters:
-Ant (1-2F): Weakling<BR>
-Hen (1-3F): Weak, but double speed<BR>
-Onigirighost (3-4F): Drains saturation<BR>
-Zombie (3-5F): Rots food<BR>
-Snake (4-7F): Paralysis bite<BR>
-Vampire (5-8F): HP drain<BR>
-Firepuff (6-11F): Mini fire breath<BR>
-Nuancer (7-11F): Morphing breath to 1 item<BR>
-Bee (8-11F): Strong fatal confusion sting<BR>
-Leecher (12-15F): Strength drain<BR>
-Yawner (12-15F): Cause sleep<BR>
-Will-O-Wisp(12-16F): Drain level<BR>
-Immunacrab(14-17F,26F): Immediate recovery from status<BR>
-Cursister (16-21F): Curse and destroy 1 item<BR>
-Reaper (17-25F): Strong double speed<BR>
-Tiger (19-25F): Throws you somewhere<BR>
-Punisher (22-29F): Critical axe swing<BR>
-Eyeball (23-25F, 27-28F): Confusion glare<BR>
-Queen Idol (26F): Mid boss<BR>
-Jolteodon (27-36F): Slow but lightning<BR>
-Mage (28-35F): Sleep or confusion staff<BR>
-UFO (31-36F): High defense but low HP<BR>
-Killer (33-39F): Highest attack power<BR>
-Xplodetank (34-38F): Ranged cannonball<BR>
-Dragon (35-40F): Floor-wide fire breath<BR>
-\*SUDO GOD\*(40F): Final boss
+## Pro tip!
+**[Read the Documentation!!](documentation.md)**
