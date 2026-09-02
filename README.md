@@ -40,8 +40,8 @@ And don't be in a rush- this isn't an action game!
 
 ## CONTROLS
 Arrow keys to move (You can move diagonally and through corners)<BR>
-Z to attack (face an enemy with D before attacking! you can attack through corners) or to select an item in the Inventory. <BR>
-X+Z to step in place (hp still regenerates)<BR>
+Z to attack (face an enemy with D before attacking! You can attack through corners) or to select an item in the Inventory. <BR>
+X+Z to step in place (HP still regenerates)<BR>
 I or C to open/close inventory<BR>
 X to exit out of inventory selection menu (when you select an item) or move without picking up items<BR>
 D+arrow to turn without moving<BR>
@@ -65,7 +65,7 @@ Buffed - Do 50% more damage. Stacks.<BR>
 Fixed inventory issues and nerfed enemy attack powers to be more accessible to beginners!
 
 ## What even is a roguelike?
-Over the passage of time, the term "roguelike" has started to lose its original meaning of procedural dungeon crawling, becoming a more general term for "games that annoy you", but this game is more similar to Rogue itself, luckily without item identification.
+Over time, the term "roguelike" has started to lose its original meaning of procedural dungeon crawling, becoming a more general term for "games that annoy you", but this game is more similar to Rogue itself, luckily without item identification.
 
 ## Pro tip!
-**[Read the Documentation!!](documentation.md)**
+**[Read the Documentation!!](Documentation.md)**
